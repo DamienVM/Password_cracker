@@ -1,0 +1,3 @@
+cracker: cracker.c
+	gcc -o cracker cracker.c -pthread
+
