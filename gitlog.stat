@@ -1,1 +1,206 @@
+commit ec0c0f5fa091b28ffa27b33d64c0eea6e4815c22
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Sun Apr 28 17:31:21 2019 +0200
 
+    Creation gitlog.stat
+
+ gitlog.stat | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit bd0766331ac18bbe332702561bd896b92aa2975e
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 17:20:57 2019 +0200
+
+    Mise en forme du dossier
+
+ src/reverse.c      |   50 +++
+ src/reverse.h      |   18 +
+ src/sha256.c       |  563 +++++++++++++++++++++++++++++
+ src/sha256.h       |   91 +++++
+ tests/01_4c_1k.bin |  Bin 0 -> 32000 bytes
+ tests/01_4c_1k.txt | 1000 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/02_6c_5.bin  |    5 +
+ tests/02_6c_5.txt  |    5 +
+ 8 files changed, 1732 insertions(+)
+
+commit 8de013b555c7796d541ab6e44bf845b6113792c8
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 17:17:16 2019 +0200
+
+    Mise en forme du dossier
+
+ rapport.pdf                | Bin 0 -> 44977 bytes
+ cracker.c => src/cracker.c |   0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 882edb83b54adee4c4d05f61fa4ebf6e3c6d94b3
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:54:37 2019 +0200
+
+    Mise à jour cracker
+
+ cracker.c | 84 +++++++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 50 insertions(+), 34 deletions(-)
+
+commit 555e369b49ea7a68dbb53476c731b2c2099b5733
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:53:50 2019 +0200
+
+    Mise à jour cracker
+
+ cracker.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 3ebb7818c890fd8f5b369c8ae3b74bc81d15bf18
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:52:24 2019 +0200
+
+    Mise à jour cracker
+
+ cracker.c | 34 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 27 deletions(-)
+
+commit 786a29ec879c1cece3b1c0712f4badea2cac944b
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:50:29 2019 +0200
+
+    Mise à jour Make file et cracker
+
+ Makefile.jpg |  2 +-
+ cracker.c    | 45 ++++++++++++++++++++++-----------------------
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+commit e7eaae65cd45fafc8f9264b56be7d3dd3b922cdc
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:46:53 2019 +0200
+
+    Mise à jour Make file
+
+ Makefile (4).jpg => Makefile.jpg | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 1c752bc29657c61d6a307a2ca2d54946c920bf91
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:45:18 2019 +0200
+
+    Mise à jour
+
+ Makefile (4).jpg | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 905d956b3f2baca5eb92dcf4aad619542ef0abdb
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:42:10 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+commit a13775f6e792fa9bb70c1365847bb7cf9e9eeb7f
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:41:19 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+commit 97554bf903fee64340b53abcfbc447c41fe4d30c
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:40:38 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
+
+commit 7013ce5f8398a425cc656e65ceaf85830c7c656b
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:37:41 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 85 insertions(+), 19 deletions(-)
+
+commit b95c9080bc7860a955b6005aee3acf177b9a914f
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:37:04 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 132 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 119 insertions(+), 13 deletions(-)
+
+commit 4410c90f46f58766f29f120d0ef389a20c78ed72
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:36:03 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 82 +++++++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 46 insertions(+), 36 deletions(-)
+
+commit 8c946b5d4e91c5524edaa88fe52215e28c02c896
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:34:54 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 97 ++++++++++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 71 insertions(+), 26 deletions(-)
+
+commit 5b7952d0775ed6f87ac5a07d2ebfc9d65102bc8e
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:33:58 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 102 +++++++++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 67 insertions(+), 35 deletions(-)
+
+commit b5271720bc83dc3d3c057c11200176958dce8d53
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:27:41 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 75 +++++++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 51 insertions(+), 24 deletions(-)
+
+commit a6b476cbbb03e4021f6c7d8e82f48475423e90c2
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:24:13 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 151 ++++++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 108 insertions(+), 43 deletions(-)
+
+commit b17ecc4c7eee8ccb23cfc667a312d4fb7c391888
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 16:18:48 2019 +0200
+
+    Mise à jour
+
+ cracker.c | 38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
+
+commit b4c5a89ab2b82274836f922273297abfc6b3df41
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Sun Apr 28 16:03:03 2019 +0200
+
+    Add files via upload
+
+ cracker.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+commit 772d9a2bee4538631ce418ac3b63ebce998bc8f6
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Sun Apr 28 15:55:59 2019 +0200
+
+    Add files via upload
+
+ cracker.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
