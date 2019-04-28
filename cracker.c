@@ -3,12 +3,23 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdint.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 void *lecture(char *fichier)
 {
-	int a = open(fichier, O_RDONLY);
-	uint32_t buffer;
-	read(a,buffer,32);
+	int N = 1;
+	for(int i = 0 ; i < N ; i++)
+	{
+		int a = open(fichier, O_RDONLY);
+		char buffer[32];
+		int b = read(a,&buffer,32);
+		while(b > 0)
+		{
+			b = read(a,&buffer,32);
+		}
+		close(a);
+	}
 }
 
 
