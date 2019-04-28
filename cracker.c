@@ -35,11 +35,13 @@ typedef struct node{
 typedef struct list{
   struct node *first;
   int size;
-}list_t;
+} list_t;
+
 
 /*
   Fonction pour initialiser une node  contennant un mot pointé par "val"
  */
+
 
 node_t* init_node(char* val){
   node_t *n;
@@ -49,13 +51,16 @@ node_t* init_node(char* val){
   return n;
 }
 
+
 /*
   Fonction pour ajouter à la liste pointée par "list" une node contennant un mot pointé par "val"
  */
+
+
 int add_node(list_t *list, char* val){
   node_t *n = init_node(val);
   if(list->first==NULL){
-    list->first =n;
+    list->first = n;
     list->size=1;
     return 1;
   }
@@ -66,9 +71,12 @@ int add_node(list_t *list, char* val){
   return 1;
 }
 
+
 /*
   Fonction qui vide la liste (le pointeur vers la liste est conservé)
 */
+
+
 void empty_list(list_t *list){
   node_t *c = list->first;
   list->first = NULL;
@@ -81,36 +89,50 @@ void empty_list(list_t *list){
   }
 }
 
+
 /*
   Fonction qui suppprime la liste et son contenu
 */
+
+
 void delete_list(list_t *list){
   empty_list(list);
   free(list->first);
   free(list);
 }
 
+
 /*
   Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de voyelle
 
 */
-int count_voyelle(char *mot){
+
+
+int count(char *mot, int c){
   int nbr = 0;
-  for(int i = 0; i<strlen(mot);i++){
+  for(int i = 0 ; i < strlen(mot) ; i++){
     if(mot[i]=='\0'){
       return nbr;
     }
-    if(mot[i]=='a' || mot[i]=='e' || mot[i]=='i' || mot[i]=='o' || mot[i]=='u' ||  mot[i]=='y'){
-      nbr++;
+    if(c == 0){
+      if(mot[i]=='a' || mot[i]=='e' || mot[i]=='i' || mot[i]=='o' || mot[i]=='u' ||  mot[i]=='y'){
+        nbr++;}
+    }
+    if(c == 1){
+      if(mot[i]!='a' && mot[i]!='e' && mot[i]!='i' && mot[i]!='o' && mot[i]!='u' &&  mot[i]!='y'){
+        nbr++;}
     }  
   }
   return nbr;
 }
 
+
 /*
   Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de consonnes
 
-*/
+
+
+
 int count_consonne(char *mot){
   int nbr = 0;
   for(int i = 0; i<strlen(mot);i++){
@@ -128,16 +150,18 @@ int count_consonne(char *mot){
 /*
   Fonction pour le thread de lecture
  */
+
+
 void *lecture(void *param)
 {
   int nf = (int)*ftrad[0];
   printf("il y a %i fichiers a lire\n",nf);
-  int count =0;
+  int co =0;
 
   for(int i=1;i<nf+1;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",ftrad[i]);
     int a = open(ftrad[i],O_RDONLY);
-    if(a==-1){printf("erreur1\n"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
@@ -145,7 +169,7 @@ void *lecture(void *param)
       /*printf("%i",buff);*/
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("erreur2\n");
+	printf("impossible de lire le fichier %i \n, i");
 	printf("%\n ",strerror(errno));
 	exit(0);
       }
@@ -153,17 +177,17 @@ void *lecture(void *param)
 	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
 	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
-	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une palce*/
+	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
-	      printf("copié en zone %i\n",j);
+	      printf("hash copié en zone %i\n",j);
 	      i=1;
 	    }
 	  }
 	  pthread_mutex_unlock(&mutex_hash);
 	}
 	sem_post(&hashfull);
-	count++;
+	co++;
       }
     }
     close(a);
@@ -197,7 +221,7 @@ void *traduction (void *param)
 	    {
 	      buf = hash[n];
 	      hash[n]=NULL;
-	      printf("\tpris en zone %i\n",n);
+	      printf("\thash pris en zone %i\n",n);
 	      m = 1;
 	    }
 	}
@@ -214,7 +238,7 @@ void *traduction (void *param)
 	for(int j = 0; j < N+1 && i==0 ; j++){
 	  if(trad[j]==NULL){
 	    trad[j]=buf2;
-	    printf("\tcopié2 en zone %i\n",j);
+	    printf("\ttraduction copiée en zone %i\n",j);
 	    i=1;
 	  }
 	}
@@ -228,12 +252,45 @@ void *traduction (void *param)
 /*
   Fonction pour le thread qui choisi les candidats
 */
+
+
 void *candidat(void* param)
 {
-  char *trad;
-  int nbr;
-  while(true){
-  }
+  list_t *list = malloc(sizeof(list_t));
+  list->first;
+  list->size;
+  char *tra;
+  int nbr = 0;
+  while(true)
+  {
+      for(int m =0; m==0;){
+	sem_wait(&tradfull);
+	pthread_mutex_lock(&mutex_trad);
+	for(int n = 0; n < N+1 && m == 0 ; n++){
+	  if(trad[n] != NULL)
+	  {
+	      tra = trad[n];
+	      trad[n]=NULL;
+	      printf("\ttraduction prise en zone %i\n",n);
+	      m = 1;
+	      int co = count(tra,c);
+	      if(co == nbr)
+  	      {
+		add_node(list,tra);
+		
+	      }
+	      if(co > nbr)
+	      {
+		nbr = co;
+		empty_list(list);
+		add_node(list,tra);
+	      }
+	    }
+	}
+	pthread_mutex_unlock(&mutex_trad);
+      }
+      sem_post(&tradempty);
+  }   
 }
 
 
@@ -332,8 +389,17 @@ int main(int argc,char *argv[])
     {
       printf("erreur Traduction\n");
     }
+  
+  pthread_t selec;
+  int errrr=pthread_create(&selec,NULL,&candidat,NULL);
+  if(errrr!=0)
+    {
+      printf("erreur Selection\n");
+    }
+
   err = pthread_join(lect,NULL);
   errr = pthread_join(traduc,NULL);
+  errrr = pthread_join(selec,NULL);
 
   pthread_mutex_destroy(&mutex_hash);
   free(hash);
