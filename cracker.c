@@ -15,7 +15,7 @@
 
 
 char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
-char **hash;         /*Tableau pour les pointeurs hash */
+uint8_t **hash;         /*Tableau pour les pointeurs hash */
 char **trad;          /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
 pthread_mutex_t mutex_trad;
@@ -24,20 +24,115 @@ sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
 int N =1;
+int c = 0;
 int lecture_finie = 0;
+
+typedef struct node{
+  struct node *next;
+  char *mot;
+} node_t;
+
+typedef struct list{
+  struct node *first;
+  int size;
+}list_t;
+
+/*
+  Fonction pour initialiser une node  contennant un mot pointé par "val"
+ */
+
+node_t* init_node(char* val){
+  node_t *n;
+  n = malloc(sizeof(node_t));
+  n->mot = val;
+  n->next = NULL;
+  return n;
+}
+
+/*
+  Fonction pour ajouter à la liste pointée par "list" une node contennant un mot pointé par "val"
+ */
+int add_node(list_t *list, char* val){
+  node_t *n = init_node(val);
+  if(list->first==NULL){
+    list->first =n;
+    list->size=1;
+    return 1;
+  }
+  node_t *p = list->first;
+  list->first=n;
+  n->next=p;
+  list->size=list->size+1;
+  return 1;
+}
+
+/*
+  Fonction qui vide la liste (le pointeur vers la liste est conservé)
+*/
+void empty_list(list_t *list){
+  node_t *c = list->first;
+  list->first = NULL;
+  node_t *n;
+  while(c!=NULL){
+    n = c->next;
+    free(c->mot);
+    free(c);
+    c=n;
+  }
+}
+
+/*
+  Fonction qui suppprime la liste et son contenu
+*/
+void delete_list(list_t *list){
+  empty_list(list);
+  free(list->first);
+  free(list);
+}
+
+/*
+  Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de voyelle
+
+*/
+int count_voyelle(char *mot){
+  int nbr = 0;
+  for(int i = 0; i<strlen(mot);i++){
+    if(mot[i]=='\0'){
+      return nbr;
+    }
+    if(mot[i]=='a' || mot[i]=='e' || mot[i]=='i' || mot[i]=='o' || mot[i]=='u' ||  mot[i]=='y'){
+      nbr++;
+    }  
+  }
+  return nbr;
+}
+
+/*
+  Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de consonnes
+
+*/
+int count_consonne(char *mot){
+  int nbr = 0;
+  for(int i = 0; i<strlen(mot);i++){
+    if(mot[i]=='\0'){
+      return nbr;
+    }
+    if(mot[i]!='a' && mot[i]!='e' && mot[i]!='i' && mot[i]!='o' && mot[i]!='u' &&  mot[i]!='y'){
+      nbr++;
+    }  
+  }
+  return nbr;
+}
 
 
 /*
-Fonction pour le thread de lecture
+  Fonction pour le thread de lecture
  */
-
-
 void *lecture(void *param)
 {
   int nf = (int)*ftrad[0];
   printf("il y a %i fichiers a lire\n",nf);
   int count =0;
-  char* buff = malloc(32);
 
   for(int i=1;i<nf+1;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",ftrad[i]);
@@ -45,7 +140,9 @@ void *lecture(void *param)
     if(a==-1){printf("erreur1\n"); }
 
     int stat = 1;
-    while(stat  != 0){                             /*boucle pour lire tout les hash*/
+    while(stat  != 0){                              /*boucle pour lire tout les hash*/
+      uint8_t* buff= malloc(32);
+      /*printf("%i",buff);*/
       stat = read(a,buff,32);
       if (stat==-1){
 	printf("erreur2\n");
@@ -58,9 +155,8 @@ void *lecture(void *param)
 	  pthread_mutex_lock(&mutex_hash);
 	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une palce*/
 	    if(hash[j]==NULL){
-	      hash[j]=malloc(32);
-	      strcpy(hash[j],buff);
-	      printf("\t copié en zone %i\n",j);
+	      hash[j]=buff;
+	      printf("copié en zone %i\n",j);
 	      i=1;
 	    }
 	  }
@@ -100,9 +196,8 @@ void *traduction (void *param)
 	  if(hash[n] != NULL)
 	    {
 	      buf = hash[n];
-	      free(hash[n]);
 	      hash[n]=NULL;
-	      printf("pris en zone %i\n",n);
+	      printf("\tpris en zone %i\n",n);
 	      m = 1;
 	    }
 	}
@@ -110,7 +205,8 @@ void *traduction (void *param)
       }
       sem_post(&hashempty);
       is_translate = reversehash(buf,buf2,16);
-      printf("la traduction est :%s:\n",buf2);
+      free(buf);
+      printf("\tla traduction est :%s:\n",buf2);
 
       for(int i =0; i==0;){
 	sem_wait(&tradempty);
@@ -118,7 +214,7 @@ void *traduction (void *param)
 	for(int j = 0; j < N+1 && i==0 ; j++){
 	  if(trad[j]==NULL){
 	    trad[j]=buf2;
-	    printf("copié2 en zone %i\n",j);
+	    printf("\tcopié2 en zone %i\n",j);
 	    i=1;
 	  }
 	}
@@ -129,9 +225,20 @@ void *traduction (void *param)
   
 }
 
+/*
+  Fonction pour le thread qui choisi les candidats
+*/
+void *candidat(void* param)
+{
+  char *trad;
+  int nbr;
+  while(true){
+  }
+}
+
 
 /*
-Fonction principale
+  Fonction principale
  */
 
 
@@ -140,7 +247,6 @@ int main(int argc,char *argv[])
   printf("\033[0;34mFonction principale commencée\033[00m\n");
   int opt;
   int f = 1;
-  int c = 0;
   int o = 0;
   char *out;
 
