@@ -12,6 +12,7 @@
 #include "reverse.c"
 #include "sha256.h"
 #include "sha256.c"
+#include <sys/time.h>
 
 
 char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
@@ -247,58 +248,57 @@ void *candidat(void* param)
   char *tra;
   int nbr = 0;
   while(M != N || value != 0)
-  {
+    {
       for(int m =0; m==0;){
 	sem_wait(&tradfull);
 	pthread_mutex_lock(&mutex_trad);
 	for(int n = 0; n < N+1 && m == 0 ; n++){
-	  if(trad[n] != NULL)
-	  {
-	      tra = trad[n];
-	      trad[n]=NULL;
-	      m = 1;
-	      int co = count(tra,c);
-	      if(co == nbr)
-  	      {
-		add_node(list,tra);
-		
-	      }
-	      if(co > nbr)
-	      {
-		nbr = co;
-		empty_list(list);
-		add_node(list,tra);
-	      }
-	    }
+	  if(trad[n] != NULL){
+	    tra = trad[n];
+	    trad[n]=NULL;
+	    m = 1;
+	  }
 	}
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradempty);
+      int co = count(tra,c);
+      if(co == nbr){
+	add_node(list,tra);
+      }
+      else if(co > nbr){
+	nbr = co;
+	empty_list(list);
+	add_node(list,tra);
+      }
+      else{
+	free(tra);
+      }
       sem_getvalue(&tradfull,&value);
-  }
-  if(o)
-  {
-    int a = open(out,O_RDWR | O_TRUNC);
-    if(a==-1){printf("impossible d'ouvrir le fichier de sortie"); }
-    struct node *n = list->first;
-    for (int i = 0; i < list->size ; i++)
-    {
-	write(a,n->mot,strlen(n->mot));
-	write(a,"\n",1);
-	n = n->next;
     }
-    close(a);
-  }   
+  if(o)
+    {
+      int a = open(out,O_RDWR | O_TRUNC);
+      if(a==-1){printf("impossible d'ouvrir le fichier de sortie"); }
+      struct node *n = list->first;
+      for (int i = 0; i < list->size ; i++)
+	{
+	  write(a,n->mot,strlen(n->mot));
+	  write(a,"\n",1);
+	  n = n->next;
+	}
+      close(a);
+    }   
   else
-  {
+    {
     struct node *n = list->first;
     for (int i = 0; i < list->size ; i++)
-    {
+      {
 	printf(n->mot);
 	printf("\n");
 	n = n->next;
+      }
     }
-  }
   delete_list(list);
   printf("fin de la sélection\n");
   pthread_exit(NULL);
@@ -312,6 +312,9 @@ void *candidat(void* param)
 
 int main(int argc,char *argv[])
 {
+  struct timeval tv1,tv2;
+  long long temps;
+  gettimeofday(&tv1,NULL);
   int opt;
   int f = 1;
 
@@ -416,8 +419,21 @@ int main(int argc,char *argv[])
 
   pthread_mutex_destroy(&mutex_hash);
   pthread_mutex_destroy(&mutex_trad);
+  sem_destroy(&hashfull);
+  sem_destroy(&hashempty);
+  sem_destroy(&tradfull);
+  sem_destroy(&tradempty);
   free(hash);
   free(ftrad);
+  free(trad);
+
+
+  gettimeofday(&tv2,NULL);
+  temps=(tv2.tv_sec-tv1.tv_sec);
+  printf("temps=%lld secondes\n",temps);
+
+
+
   printf("\033[0;31mFonction principale finie\033[00m\n");
   return 1;
 }
