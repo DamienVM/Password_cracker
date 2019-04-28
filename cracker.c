@@ -8,20 +8,25 @@
 #include <errno.h>
 #include <getopt.h>
 #include <semaphore.h>
+#include "reverse.h"
 
 char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
 char **hash;         /*Tableau pour les pointeurs hash */
 char **trad;          /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
 pthread_mutex_t mutex_trad;
-sem_t empty;
-sem_t full;
+sem_t hashempty;
+sem_t hashfull;
+sem_t tradempty;
+sem_t tradfull;
 int N =1;
 int lecture_finie = 0;
+
 
 /*
 Fonction pour le thread de lecture
  */
+
 
 void *lecture(void *param)
 {
@@ -38,7 +43,6 @@ void *lecture(void *param)
     int stat = 1;
     while(stat  != 0){
       stat = read(a,buff,32);
-      /*printf("%064x\n",*buff);*/
       if (stat==-1){
 	printf("erreur2\n");
 	printf("%\n ",strerror(errno));
@@ -46,21 +50,19 @@ void *lecture(void *param)
       }
       else if(stat != 0){
 	for(int i =0; i==0;){
-	  sem_wait(&empty);
+	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
 	  for(int j = 0; j < N+1 && i==0 ;j++){
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
 	      printf("\t copié en zone %i\n",j);
-	      printf("le hash est %i",*buff); 
 	      i=1;
 	    }
 	  }
 	  pthread_mutex_unlock(&mutex_hash);
 	}
-	sem_post(&full);
+	sem_post(&hashfull);
 	count++;
-	/*printf("\t %i %064hhx \n",count,buff);*/
       }
     }
     close(a);
@@ -71,32 +73,58 @@ void *lecture(void *param)
   pthread_exit(NULL);
 }
 
+
 /*
 Fonction pour le thread de traduction
  */
 
+
 void *traduction (void *param)
 {
   int sval;
-  sem_getvalue(&full,&sval);
+  sem_getvalue(&hashfull,&sval);
   char *buf;
-  while(lecture_finie == 0 && sval != 0)
+  while(true)
   {
-	sem_wait(&full);
-	pthread_mutex_lock(&mutex_hash);
-	for(int i = 0; i<N+1 ; i++)
-	{
-	  if(hash[i] != NULL)
-	  {
-	     buf = hash[i];
+	for(int m =0; m==0;){
+	  sem_wait(&hashfull);
+	  pthread_mutex_lock(&mutex_hash);
+	  for(int n = 0; n < N+1 && m == 0 ; n++){
+	    if(hash[n] != NULL)
+	    {
+	       buf = hash[n];
+	       m = 1;
+	    }
 	  }
+	  pthread_mutex_unlock(&mutex_hash);
 	}
+	sem_post(&hashempty);
+
+		/* TRADUIRE BUF */
+
+	for(int i =0; i==0;){
+	  sem_wait(&tradempty);
+	  pthread_mutex_lock(&mutex_trad);
+	  for(int j = 0; j < N+1 && i==0 ; j++){
+	    if(trad[j]==NULL){
+	      trad[j]=buf;
+	      printf("\t copié en zone %i\n",j);
+	      i=1;
+	    }
+	  }
+	  pthread_mutex_unlock(&mutex_trad);
+	}
+	sem_post(&tradfull);
   }
+  
 }
+
 
 /*
 Fonction principale
  */
+
+
 int main(int argc,char *argv[])
 {
   printf("\033[0;34mFonction principale commencée\033[00m\n");
@@ -128,45 +156,54 @@ int main(int argc,char *argv[])
   printf("il y a %i threads" ,N);
 
 
-
-
   /*
     Fin de L'anayse des arguments
    */
+
+
   printf("\033[0;31mArivée à la prochaine étape\033[00m\n");
   printf("il y a %i fichiers à traiter\n",nf);
 
   ftrad=  malloc(sizeof(char*)*(nf+1));
   ftrad[0] = (char*)&nf;
 
-  printf("il y a bien %i a traiter\n",(int)*ftrad[0]) ;
+  printf("il y a bien %i fichiers a traiter\n",(int)*ftrad[0]) ;
   for(int i = 1; i<nf+1 ;i++)
     {
       ftrad[i]=argv[f+i-1];
       printf("\tfichier %i copié %s\n",i,ftrad[i]);
     }
   
-  printf("creation du tableau de buffer\n"); 
-  hash = calloc((N+1),sizeof(char*));
+  printf("creation du tableau de hash\n"); 
+  hash = calloc((N+1),8);
   if(hash[0]==NULL)
     {
       printf("\tfait\n");
     }
+
+  printf("creation du tableau de trad\n"); 
+  trad = calloc((N+1),8);
+  if(trad[0]==NULL)
+    {
+      printf("\tfait\n");
+    }
+
   pthread_mutex_init(&mutex_hash,NULL);
-  
-
-
+  pthread_mutex_init(&mutex_trad,NULL);
+  sem_init(&hashfull,0,0);
+  sem_init(&hashempty,0,N+1);
+  sem_init(&tradfull,0,0);
+  sem_init(&tradempty,0,N+1);
 
 
   /*
     Etape de création des threads
    */
+
+
   printf("\033[0;31mCréation des threads\033[00m\n");
   
   pthread_t lect;
-  sem_init(&full,0,0);
-  sem_init(&empty,0,N+1);
-
   int err=pthread_create(&lect,NULL,&lecture,NULL);
   if(err!=0)
     {
@@ -174,6 +211,14 @@ int main(int argc,char *argv[])
     }
   err = pthread_join(lect,NULL);
   
+  pthread_t traduc;
+  int errr=pthread_create(&traduc,NULL,&traduction,NULL);
+  if(errr!=0)
+    {
+      printf("erreur Traduction\n");
+    }
+  errr = pthread_join(traduc,NULL);
+
   pthread_mutex_destroy(&mutex_hash);
   free(hash);
   free(ftrad);
