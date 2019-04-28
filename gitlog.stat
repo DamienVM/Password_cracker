@@ -1,3 +1,30 @@
+commit aaefc5c7d7fe210bffa386941c55613ea9e3ce84
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 21:34:29 2019 +0200
+
+    Mise a jour carcker
+
+ src/cracker.c | 51 +++++++++++++++++++++++----------------------------
+ 1 file changed, 23 insertions(+), 28 deletions(-)
+
+commit 7118dfaa7fb52d33eaf0c4af3c4bb90cfa95f71e
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 21:33:59 2019 +0200
+
+    Mise a jour carcker
+
+ src/cracker.c | 219 +++++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 185 insertions(+), 34 deletions(-)
+
+commit b6076217400ec085c7c3ab9128f3e0f07dd6f506
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 17:45:06 2019 +0200
+
+    Mise a jour gitlog.stat
+
+ gitlog.stat | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
 commit 38d9a77715910a387a5395ceefd635be7ad14d06
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
 Date:   Sun Apr 28 17:44:04 2019 +0200
