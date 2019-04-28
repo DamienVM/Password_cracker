@@ -25,7 +25,10 @@ sem_t tradempty;
 sem_t tradfull;
 int N =1;
 int c = 0;
+int o = 0;
+char *out;
 int lecture_finie = 0;
+int traduction_finie = 0;
 
 typedef struct node{
   struct node *next;
@@ -206,12 +209,10 @@ void *lecture(void *param)
 
 void *traduction (void *param)
 {
-  int sval;
-  sem_getvalue(&hashfull,&sval);
   char *buf;  /* buffer pour le hash*/
   bool is_translate; 
-  while(true)
-    {
+  while(lecture_finie == 0)
+  {
       char *buf2 = malloc(16); /* buffer pour la traduction*/
       for(int m =0; m==0;){
 	sem_wait(&hashfull);
@@ -245,8 +246,8 @@ void *traduction (void *param)
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradfull);
-    }
-  
+  }
+  traduction_finie = 1;
 }
 
 /*
@@ -261,7 +262,7 @@ void *candidat(void* param)
   list->size;
   char *tra;
   int nbr = 0;
-  while(true)
+  while(traduction_finie == 0)
   {
       for(int m =0; m==0;){
 	sem_wait(&tradfull);
@@ -290,6 +291,18 @@ void *candidat(void* param)
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradempty);
+  }
+  if(o)
+  {
+    int a = open(out,O_WRONLY);
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    struct node *n = list->first;
+    for (int i = 0; i < list->size ; i++)
+    {
+	write(a,n->mot,16);
+	n = n->next;
+    }
+    close(a);
   }   
 }
 
@@ -304,8 +317,6 @@ int main(int argc,char *argv[])
   printf("\033[0;34mFonction principale commencée\033[00m\n");
   int opt;
   int f = 1;
-  int o = 0;
-  char *out;
 
   while ((opt = getopt (argc, argv, "t:co:")) != -1)
   {
