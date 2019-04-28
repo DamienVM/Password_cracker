@@ -183,7 +183,6 @@ void *lecture(void *param)
 	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
-	      printf("hash copié en zone %i\n",j);
 	      i=1;
 	    }
 	  }
@@ -224,7 +223,6 @@ void *traduction (void *param)
 	    {
 	      buf = hash[n];
 	      hash[n]=NULL;
-	      printf("\thash pris en zone %i\n",n);
 	      m = 1;
 	    }
 	}
@@ -233,7 +231,6 @@ void *traduction (void *param)
       sem_post(&hashempty);
       is_translate = reversehash(buf,buf2,16);
       free(buf);
-      printf("\tla traduction est :%s:\n",buf2);
 
       for(int i =0; i==0;){
 	sem_wait(&tradempty);
@@ -241,7 +238,6 @@ void *traduction (void *param)
 	for(int j = 0; j < N+1 && i==0 ; j++){
 	  if(trad[j]==NULL){
 	    trad[j]=buf2;
-	    printf("\ttraduction copiée en zone %i\n",j);
 	    i=1;
 	  }
 	}
@@ -279,7 +275,6 @@ void *candidat(void* param)
 	  {
 	      tra = trad[n];
 	      trad[n]=NULL;
-	      printf("\ttraduction prise en zone %i\n",n);
 	      m = 1;
 	      int co = count(tra,c);
 	      if(co == nbr)
@@ -336,7 +331,6 @@ void *candidat(void* param)
 
 int main(int argc,char *argv[])
 {
-  printf("\033[0;34mFonction principale commencée\033[00m\n");
   int opt;
   int f = 1;
 
@@ -359,7 +353,6 @@ int main(int argc,char *argv[])
   }	
 
   int nf = argc-f;
-  printf("il y a %i threads\n" ,N);
 
 
   /*
@@ -367,17 +360,12 @@ int main(int argc,char *argv[])
    */
 
 
-  printf("\033[0;31mArivée à la prochaine étape\033[00m\n");
-  printf("il y a %i fichiers à traiter\n",nf);
-
   ftrad=  malloc(sizeof(char*)*(nf+1));
   ftrad[0] = (char*)&nf;
 
-  printf("il y a bien %i fichiers a traiter\n",(int)*ftrad[0]) ;
   for(int i = 1; i<nf+1 ;i++)
     {
       ftrad[i]=argv[f+i-1];
-      printf("\tfichier %i copié %s\n",i,ftrad[i]);
     }
   
   printf("creation du tableau de hash\n"); 
@@ -406,8 +394,6 @@ int main(int argc,char *argv[])
     Etape de création des threads
    */
 
-
-  printf("\033[0;31mCréation des threads\033[00m\n");
   
   pthread_t lect;
   int err=pthread_create(&lect,NULL,&lecture,NULL);
@@ -415,14 +401,15 @@ int main(int argc,char *argv[])
     {
       printf("erreur Lecture\n");
     }
-  
-  pthread_t traduc;
-  int errr=pthread_create(&traduc,NULL,&traduction,NULL);
-  if(errr!=0)
-    {
-      printf("erreur Traduction\n");
-    }
-  
+  pthread_t threads[N];
+  for(int i=0; i < N ; i++)
+  {
+    if (pthread_create(&(threads[i]),NULL,&traduction,NULL) != 0)
+        {
+          fprintf(stderr, "error: Cannot create thread  %d\n", i);
+          break;
+        }
+  } 
   pthread_t selec;
   int errrr=pthread_create(&selec,NULL,&candidat,NULL);
   if(errrr!=0)
@@ -430,8 +417,20 @@ int main(int argc,char *argv[])
       printf("erreur Selection\n");
     }
 
+
+   /*
+    Etape de lancement des threads
+   */
+
+
   err = pthread_join(lect,NULL);
-  errr = pthread_join(traduc,NULL);
+  for(int j = 0 ; j < N ; j++)
+  {
+     if (pthread_join(threads[j], NULL) != 0)
+        {
+          fprintf(stderr, "error: Cannot join thread  %d\n", j);
+        }
+  }
   errrr = pthread_join(selec,NULL);
 
   pthread_mutex_destroy(&mutex_hash);
