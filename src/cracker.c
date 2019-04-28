@@ -145,21 +145,20 @@ int count(char *mot, int c){
 
 void *lecture1(void *param)
 {
-  printf("il y a %i fichiers a lire\n",a1);
+  printf("\033[22;31m il y a %i fichiers a lire\n",a1);
   int co =0;
 
   for(int i=0;i<a1;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("%s\n",f1[i]);
+    printf("\033[22;31m %s\n",f1[i]);
     int a = open(f1[i],O_RDONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("\033[22;31m impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
-	printf("%\n ",strerror(errno));
+	printf("\033[22;31m impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -180,8 +179,8 @@ void *lecture1(void *param)
     }
     close(a);
   }
-  printf("il y a %i mots\n",co);
-  printf("fin de lecture\n");
+  printf("\033[22;31m il y a %i mots\n",co);
+  printf("\033[22;31m fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
@@ -190,21 +189,20 @@ void *lecture1(void *param)
 
 void *lecture2(void *param)
 {
-  printf("il y a %i fichiers a lire\n",a2);
+  printf("\x1b[34m il y a %i fichiers a lire\n",a2);
   int co =0;
 
   for(int i=0;i<a2;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("%s\n",f2[i]);
+    printf("\x1b[34m %s\n",f2[i]);
     int a = open(f2[i],O_RDONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("\x1b[34m impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
-	printf("%\n ",strerror(errno));
+	printf("\x1b[34m impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -225,29 +223,28 @@ void *lecture2(void *param)
     }
     close(a);
   }
-  printf("il y a %i mots\n",co);
-  printf("fin de lecture\n");
+  printf("\x1b[34m il y a %i mots\n",co);
+  printf("\x1b[34m fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
 
 void *lecture3(void *param)
 {
-  printf("il y a %i fichiers a lire\n",a3);
+  printf("\x1b[33m il y a %i fichiers a lire\n",a3);
   int co =0;
 
   for(int i=0;i<a3;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("%s\n",f3[i]);
+    printf("\x1b[33m %s\n",f3[i]);
     int a = open(f3[i],O_RDONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("\x1b[33m impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
-	printf("%\n ",strerror(errno));
+	printf("\x1b[33m impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -268,8 +265,8 @@ void *lecture3(void *param)
     }
     close(a);
   }
-  printf("il y a %i mots\n",co);
-  printf("fin de lecture\n");
+  printf("\x1b[33m il y a %i mots\n",co);
+  printf("\x1b[33m fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
@@ -443,16 +440,14 @@ int main(int argc,char *argv[])
   a1 = 0;
   a2 = 0;
   a3 = 0;
-  char http[8] = "https://";
-  char media[6] = "/media";
   for(int i = 0 ; i < nf ; i++)
     {
-	if(strstr(argv[f+i],http) != NULL)
+	if(strstr(argv[f+i],"https://") != NULL)
 	{
 	  f1[a1] = argv[f+i];
 	  a1++;
 	}
-	if(strstr(argv[f+i],media) != NULL)
+	if(strstr(argv[f+i],"/media") != NULL)
 	{
 	  f2[a2] = argv[f+i];
 	  a2++;
@@ -499,7 +494,7 @@ int main(int argc,char *argv[])
     T++;
     if(err!=0)
     {
-      printf("impossible de creer le thread de lecture \n");
+      printf("impossible de creer le thread de lecture 1 \n");
     }
   }
 
@@ -509,7 +504,7 @@ int main(int argc,char *argv[])
     T++;
     if(err!=0)
     {
-      printf("impossible de creer le thread de lecture \n");
+      printf("impossible de creer le thread de lecture 2 \n");
     }
   }
 
@@ -519,7 +514,7 @@ int main(int argc,char *argv[])
     T++;
     if(err!=0)
     {
-      printf("impossible de creer le thread de lecture \n");
+      printf("impossible de creer le thread de lecture 3 \n");
     }
   }
 
