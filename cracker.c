@@ -195,7 +195,7 @@ void *lecture(void *param)
     }
     close(a);
   }
-  printf("il y a %i mots\n",count);
+  printf("il y a %i mots\n",co);
   printf("fin de lecture\n");
   lecture_finie = 1;
   pthread_exit(NULL);
@@ -209,9 +209,11 @@ void *lecture(void *param)
 
 void *traduction (void *param)
 {
+  int value;
+  sem_getvalue(&hashfull,&value);
   char *buf;  /* buffer pour le hash*/
   bool is_translate; 
-  while(lecture_finie == 0)
+  while(lecture_finie == 0 || value != 0)
   {
       char *buf2 = malloc(16); /* buffer pour la traduction*/
       for(int m =0; m==0;){
@@ -246,8 +248,11 @@ void *traduction (void *param)
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradfull);
+      sem_getvalue(&hashfull,&value);
   }
   traduction_finie = 1;
+  printf("fin de traduction\n");
+  pthread_exit(NULL);
 }
 
 /*
@@ -257,12 +262,14 @@ void *traduction (void *param)
 
 void *candidat(void* param)
 {
+  int value;
+  sem_getvalue(&tradfull,&value);
   list_t *list = malloc(sizeof(list_t));
   list->first;
   list->size;
   char *tra;
   int nbr = 0;
-  while(traduction_finie == 0)
+  while(traduction_finie == 0 || value != 0)
   {
       for(int m =0; m==0;){
 	sem_wait(&tradfull);
@@ -291,6 +298,7 @@ void *candidat(void* param)
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradempty);
+      sem_getvalue(&tradfull,&value);
   }
   if(o)
   {
@@ -304,6 +312,8 @@ void *candidat(void* param)
     }
     close(a);
   }   
+  printf("fin de la sélection\n");
+  pthread_exit(NULL);
 }
 
 
@@ -413,6 +423,7 @@ int main(int argc,char *argv[])
   errrr = pthread_join(selec,NULL);
 
   pthread_mutex_destroy(&mutex_hash);
+  pthread_mutex_destroy(&mutex_trad);
   free(hash);
   free(ftrad);
   printf("\033[0;31mFonction principale finie\033[00m\n");
