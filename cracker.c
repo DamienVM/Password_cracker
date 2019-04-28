@@ -25,29 +25,33 @@ void *lecture(char *fichier)
 
 int main(int argc,char *argv[])
 {
+	int opt;
+	int f = 1;
 	int N = 1; /*nombre de threads de calculs*/
 	int c = 0;
-	int nargs = 1;
 	int o = 0;
 	char *out;
-	if(strcmp(argv[nargs],"-t") == 0)
+
+	while ((opt = getopt (argc, argv, "t:co:")) != -1)
 	{
-		N = atoi(argv[nargs+1]);
-		nargs = nargs+2;
-	}
-	if(strcmp(argv[nargs],"-c") == 0)
-	{
-		c = 1;
-		nargs++;
-	}
-	if(strcmp(argv[nargs],"-o") == 0)
-	{
-		o = 1;
-		out = argv[nargs+1];
-		nargs = nargs+2;
-	}
+		if(opt == 't')
+		{
+			N = *optarg;
+		}
+		if(opt == 'c')
+		{
+			c = 1;
+		}
+		if(opt == 'o')
+		{
+			o = 1;
+			out = optarg;
+		}
+		f = optind;
+	}	
+
+	char *fichier = argv[f];
 	uint8_t *ptr = malloc(sizeof(*ptr)*(N+1));
-	
 	return 1;
 }
 
