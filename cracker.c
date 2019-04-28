@@ -23,9 +23,9 @@ sem_t hashempty;
 sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
-int N = 1;
-int M = 0;
-int W = 0;
+int N = 1; /* nombre de threads de calcul*/
+int M = 0; /*nombre de threads ayant fini l'étape traduction */
+int W = 0; /*nombre de threads ayant fini l'étape lecture */
 int c = 0;
 int o = 0;
 char *out;
@@ -107,7 +107,7 @@ void delete_list(list_t *list){
 
 
 /*
-  Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de voyelle
+  Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de voyelles ou de consonnes en fonction du paramètre c
 
 */
 
@@ -299,6 +299,7 @@ void *candidat(void* param)
 	n = n->next;
     }
   }
+  delete_list(list);
   printf("fin de la sélection\n");
   pthread_exit(NULL);
 }
