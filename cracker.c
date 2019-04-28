@@ -9,6 +9,10 @@
 #include <getopt.h>
 #include <semaphore.h>
 #include "reverse.h"
+#include "reverse.c"
+#include "sha256.h"
+#include "sha256.c"
+
 
 char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
 char **hash;         /*Tableau pour les pointeurs hash */
@@ -35,13 +39,13 @@ void *lecture(void *param)
   int count =0;
   char* buff = malloc(32);
 
-  for(int i=1;i<nf+1;i++){
+  for(int i=1;i<nf+1;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",ftrad[i]);
     int a = open(ftrad[i],O_RDONLY);
     if(a==-1){printf("erreur1\n"); }
 
     int stat = 1;
-    while(stat  != 0){
+    while(stat  != 0){                             /*boucle pour lire tout les hash*/
       stat = read(a,buff,32);
       if (stat==-1){
 	printf("erreur2\n");
@@ -49,12 +53,13 @@ void *lecture(void *param)
 	exit(0);
       }
       else if(stat != 0){
-	for(int i =0; i==0;){
+	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
 	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
-	  for(int j = 0; j < N+1 && i==0 ;j++){
+	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une palce*/
 	    if(hash[j]==NULL){
-	      hash[j]=buff;
+	      hash[j]=malloc(32);
+	      strcpy(hash[j],buff);
 	      printf("\t copié en zone %i\n",j);
 	      i=1;
 	    }
@@ -75,47 +80,52 @@ void *lecture(void *param)
 
 
 /*
-Fonction pour le thread de traduction
- */
+  Fonction pour le thread de traduction
+*/
 
 
 void *traduction (void *param)
 {
   int sval;
   sem_getvalue(&hashfull,&sval);
-  char *buf;
+  char *buf;  /* buffer pour le hash*/
+  bool is_translate; 
   while(true)
-  {
-	for(int m =0; m==0;){
-	  sem_wait(&hashfull);
-	  pthread_mutex_lock(&mutex_hash);
-	  for(int n = 0; n < N+1 && m == 0 ; n++){
-	    if(hash[n] != NULL)
+    {
+      char *buf2 = malloc(16); /* buffer pour la traduction*/
+      for(int m =0; m==0;){
+	sem_wait(&hashfull);
+	pthread_mutex_lock(&mutex_hash);
+	for(int n = 0; n < N+1 && m == 0 ; n++){
+	  if(hash[n] != NULL)
 	    {
-	       buf = hash[n];
-	       m = 1;
+	      buf = hash[n];
+	      free(hash[n]);
+	      hash[n]=NULL;
+	      printf("pris en zone %i\n",n);
+	      m = 1;
 	    }
-	  }
-	  pthread_mutex_unlock(&mutex_hash);
 	}
-	sem_post(&hashempty);
+	pthread_mutex_unlock(&mutex_hash);
+      }
+      sem_post(&hashempty);
+      is_translate = reversehash(buf,buf2,16);
+      printf("la traduction est :%s:\n",buf2);
 
-		/* TRADUIRE BUF */
-
-	for(int i =0; i==0;){
-	  sem_wait(&tradempty);
-	  pthread_mutex_lock(&mutex_trad);
-	  for(int j = 0; j < N+1 && i==0 ; j++){
-	    if(trad[j]==NULL){
-	      trad[j]=buf;
-	      printf("\t copié en zone %i\n",j);
-	      i=1;
-	    }
+      for(int i =0; i==0;){
+	sem_wait(&tradempty);
+	pthread_mutex_lock(&mutex_trad);
+	for(int j = 0; j < N+1 && i==0 ; j++){
+	  if(trad[j]==NULL){
+	    trad[j]=buf2;
+	    printf("copié2 en zone %i\n",j);
+	    i=1;
 	  }
-	  pthread_mutex_unlock(&mutex_trad);
 	}
-	sem_post(&tradfull);
-  }
+	pthread_mutex_unlock(&mutex_trad);
+      }
+      sem_post(&tradfull);
+    }
   
 }
 
@@ -153,7 +163,7 @@ int main(int argc,char *argv[])
   }	
 
   int nf = argc-f;
-  printf("il y a %i threads" ,N);
+  printf("il y a %i threads\n" ,N);
 
 
   /*
@@ -209,7 +219,6 @@ int main(int argc,char *argv[])
     {
       printf("erreur Lecture\n");
     }
-  err = pthread_join(lect,NULL);
   
   pthread_t traduc;
   int errr=pthread_create(&traduc,NULL,&traduction,NULL);
@@ -217,6 +226,7 @@ int main(int argc,char *argv[])
     {
       printf("erreur Traduction\n");
     }
+  err = pthread_join(lect,NULL);
   errr = pthread_join(traduc,NULL);
 
   pthread_mutex_destroy(&mutex_hash);
