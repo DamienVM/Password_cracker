@@ -1,3 +1,12 @@
+commit 38d9a77715910a387a5395ceefd635be7ad14d06
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sun Apr 28 17:44:04 2019 +0200
+
+    Mise a jour gitlog.stat
+
+ gitlog.stat | 205 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 205 insertions(+)
+
 commit ec0c0f5fa091b28ffa27b33d64c0eea6e4815c22
 Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
 Date:   Sun Apr 28 17:31:21 2019 +0200
