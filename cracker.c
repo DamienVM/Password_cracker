@@ -302,16 +302,28 @@ void *candidat(void* param)
   }
   if(o)
   {
-    int a = open(out,O_WRONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    int a = open(out,O_RDWR | O_TRUNC);
+    if(a==-1){printf("impossible d'ouvrir le fichier de sortie"); }
     struct node *n = list->first;
     for (int i = 0; i < list->size ; i++)
     {
-	write(a,n->mot,16);
+	write(a,n->mot,strlen(n->mot));
+	write(a,"\n",1);
 	n = n->next;
     }
     close(a);
   }   
+  else
+  {
+    struct node *n = list->first;
+    for (int i = 0; i < list->size ; i++)
+    {
+	printf(n->mot);
+	printf("\n");
+	n = n->next;
+    }
+  }
+  delete_list(list);
   printf("fin de la sélection\n");
   pthread_exit(NULL);
 }
