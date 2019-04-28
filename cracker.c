@@ -23,12 +23,13 @@ sem_t hashempty;
 sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
-int N =1;
+int N = 1;
+int M = 0;
+int W = 0;
 int c = 0;
 int o = 0;
 char *out;
 int lecture_finie = 0;
-int traduction_finie = 0;
 
 typedef struct node{
   struct node *next;
@@ -131,26 +132,6 @@ int count(char *mot, int c){
 
 
 /*
-  Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de consonnes
-
-
-
-
-int count_consonne(char *mot){
-  int nbr = 0;
-  for(int i = 0; i<strlen(mot);i++){
-    if(mot[i]=='\0'){
-      return nbr;
-    }
-    if(mot[i]!='a' && mot[i]!='e' && mot[i]!='i' && mot[i]!='o' && mot[i]!='u' &&  mot[i]!='y'){
-      nbr++;
-    }  
-  }
-  return nbr;
-}
-
-
-/*
   Fonction pour le thread de lecture
  */
 
@@ -196,7 +177,7 @@ void *lecture(void *param)
   }
   printf("il y a %i mots\n",co);
   printf("fin de lecture\n");
-  lecture_finie = 1;
+  W++;
   pthread_exit(NULL);
 }
 
@@ -212,7 +193,7 @@ void *traduction (void *param)
   sem_getvalue(&hashfull,&value);
   char *buf;  /* buffer pour le hash*/
   bool is_translate; 
-  while(lecture_finie == 0 || value != 0)
+  while(W != 1 || value != 0)
   {
       char *buf2 = malloc(16); /* buffer pour la traduction*/
       for(int m =0; m==0;){
@@ -246,8 +227,8 @@ void *traduction (void *param)
       sem_post(&tradfull);
       sem_getvalue(&hashfull,&value);
   }
-  traduction_finie = 1;
   printf("fin de traduction\n");
+  M++;
   pthread_exit(NULL);
 }
 
@@ -265,7 +246,7 @@ void *candidat(void* param)
   list->size;
   char *tra;
   int nbr = 0;
-  while(traduction_finie == 0 || value != 0)
+  while(M != N || value != 0)
   {
       for(int m =0; m==0;){
 	sem_wait(&tradfull);
@@ -318,7 +299,6 @@ void *candidat(void* param)
 	n = n->next;
     }
   }
-  delete_list(list);
   printf("fin de la sélection\n");
   pthread_exit(NULL);
 }
