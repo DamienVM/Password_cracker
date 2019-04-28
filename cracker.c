@@ -6,15 +6,24 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <getopt.h>
+#include <semaphore.h>
 
 char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
-char **hash;         /*Buffer pour les pointeurs hash */
+char **hash;         /*Tableau pour les pointeurs hash */
+char **trad;          /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
+pthread_mutex_t mutex_trad;
+sem_t empty;
+sem_t full;
 int N =1;
+int lecture_finie = 0;
+
 /*
 Fonction pour le thread de lecture
  */
-void *lecture(void* param)
+
+void *lecture(void *param)
 {
   int nf = (int)*ftrad[0];
   printf("il y a %i fichiers a lire\n",nf);
@@ -37,21 +46,19 @@ void *lecture(void* param)
       }
       else if(stat != 0){
 	for(int i =0; i==0;){
+	  sem_wait(&empty);
 	  pthread_mutex_lock(&mutex_hash);
 	  for(int j = 0; j < N+1 && i==0 ;j++){
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
 	      printf("\t copié en zone %i\n",j);
-	      i=1;
-	    }
-	    else if(j==N){
+	      printf("le hash est %i",*buff); 
 	      i=1;
 	    }
 	  }
-	  
 	  pthread_mutex_unlock(&mutex_hash);
 	}
-	
+	sem_post(&full);
 	count++;
 	/*printf("\t %i %064hhx \n",count,buff);*/
       }
@@ -60,7 +67,31 @@ void *lecture(void* param)
   }
   printf("il y a %i mots\n",count);
   printf("fin de lecture\n");
+  lecture_finie = 1;
   pthread_exit(NULL);
+}
+
+/*
+Fonction pour le thread de traduction
+ */
+
+void *traduction (void *param)
+{
+  int sval;
+  sem_getvalue(&full,&sval);
+  char *buf;
+  while(lecture_finie == 0 && sval != 0)
+  {
+	sem_wait(&full);
+	pthread_mutex_lock(&mutex_hash);
+	for(int i = 0; i<N+1 ; i++)
+	{
+	  if(hash[i] != NULL)
+	  {
+	     buf = hash[i];
+	  }
+	}
+  }
 }
 
 /*
@@ -69,31 +100,32 @@ Fonction principale
 int main(int argc,char *argv[])
 {
   printf("\033[0;34mFonction principale commencée\033[00m\n");
-  int c = 0;     /*Consonne ativé*/
-  int nargs = 1; /*Compteur d'arguments*/
-  int o = 0;     /*Fichier de sortie ou pas*/
-  char *out;     /*Fichier de sortie*/
-  printf("Initialisation terminée\n");
+  int opt;
+  int f = 1;
+  int c = 0;
+  int o = 0;
+  char *out;
 
-  if(strcmp(argv[nargs],"-t") == 0)
-    {
-      N = atoi(argv[nargs+1]);
-      nargs = nargs+2;
-    }
-  printf("le Nombre de thread est %i\n", N);
-  if(strcmp(argv[nargs],"-c") == 0)
-    {
-      c = 1;
-      nargs++;
-    }
-  printf("Les consonnes sont a:%i\n", c);
-  if(strcmp(argv[nargs],"-o") == 0)
-    {
-      o = 1;
-      out = argv[nargs+1];
-      nargs = nargs+2;
-    }
-  printf("Il y a un fichier de sortie:%i\n", o);
+  while ((opt = getopt (argc, argv, "t:co:")) != -1)
+  {
+	if(opt == 't')
+	{
+		N = atoi(optarg);
+	}
+	if(opt == 'c')
+	{
+		c = 1;
+	}
+	if(opt == 'o')
+	{
+		o = 1;
+		out = optarg;
+	}
+	f = optind;
+  }	
+
+  int nf = argc-f;
+  printf("il y a %i threads" ,N);
 
 
 
@@ -102,8 +134,6 @@ int main(int argc,char *argv[])
     Fin de L'anayse des arguments
    */
   printf("\033[0;31mArivée à la prochaine étape\033[00m\n");
-
-  int nf = argc-nargs; /*Nombre de fichiers en argument*/
   printf("il y a %i fichiers à traiter\n",nf);
 
   ftrad=  malloc(sizeof(char*)*(nf+1));
@@ -112,12 +142,12 @@ int main(int argc,char *argv[])
   printf("il y a bien %i a traiter\n",(int)*ftrad[0]) ;
   for(int i = 1; i<nf+1 ;i++)
     {
-      ftrad[i]=argv[nargs+i-1];
+      ftrad[i]=argv[f+i-1];
       printf("\tfichier %i copié %s\n",i,ftrad[i]);
     }
   
   printf("creation du tableau de buffer\n"); 
-  hash = calloc((N+1),sizeof(uint8_t));
+  hash = calloc((N+1),sizeof(char*));
   if(hash[0]==NULL)
     {
       printf("\tfait\n");
@@ -134,6 +164,8 @@ int main(int argc,char *argv[])
   printf("\033[0;31mCréation des threads\033[00m\n");
   
   pthread_t lect;
+  sem_init(&full,0,0);
+  sem_init(&empty,0,N+1);
 
   int err=pthread_create(&lect,NULL,&lecture,NULL);
   if(err!=0)
