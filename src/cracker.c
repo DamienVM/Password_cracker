@@ -15,7 +15,9 @@
 #include <sys/time.h>
 
 
-char **ftrad;        /*Liste des fichiers dont le premier argument est un pointeur vers le nbr de fichiers*/
+char **f1;
+char **f2; 
+char **f3;         /*Liste des fichiers*/
 uint8_t **hash;         /*Tableau pour les pointeurs hash */
 char **trad;          /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
@@ -25,12 +27,15 @@ sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
 int N = 1; /* nombre de threads de calcul*/
+int T = 0; /*nombre de threads de lecture */
 int M = 0; /*nombre de threads ayant fini l'étape traduction */
 int W = 0; /*nombre de threads ayant fini l'étape lecture */
 int c = 0;
 int o = 0;
 char *out;
-int lecture_finie = 0;
+int a1;
+int a2;
+int a3;
 
 typedef struct node{
   struct node *next;
@@ -137,21 +142,108 @@ int count(char *mot, int c){
  */
 
 
-void *lecture(void *param)
+
+void *lecture1(void *param)
 {
-  int nf = (int)*ftrad[0];
-  printf("il y a %i fichiers a lire\n",nf);
+  printf("il y a %i fichiers a lire\n",a1);
   int co =0;
 
-  for(int i=1;i<nf+1;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("%s\n",ftrad[i]);
-    int a = open(ftrad[i],O_RDONLY);
+  for(int i=0;i<a1;i++){                          /*boucle pour lire tout les fichiers*/
+    printf("%s\n",f1[i]);
+    int a = open(f1[i],O_RDONLY);
     if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
-      /*printf("%i",buff);*/
+      stat = read(a,buff,32);
+      if (stat==-1){
+	printf("impossible de lire le fichier %i \n, i");
+	printf("%\n ",strerror(errno));
+	exit(0);
+      }
+      else if(stat != 0){
+	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
+	  sem_wait(&hashempty);
+	  pthread_mutex_lock(&mutex_hash);
+	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
+	    if(hash[j]==NULL){
+	      hash[j]=buff;
+	      i=1;
+	    }
+	  }
+	  pthread_mutex_unlock(&mutex_hash);
+	}
+	sem_post(&hashfull);
+	co++;
+      }
+    }
+    close(a);
+  }
+  printf("il y a %i mots\n",co);
+  printf("fin de lecture\n");
+  W++;
+  pthread_exit(NULL);
+}
+
+
+
+void *lecture2(void *param)
+{
+  printf("il y a %i fichiers a lire\n",a2);
+  int co =0;
+
+  for(int i=0;i<a2;i++){                          /*boucle pour lire tout les fichiers*/
+    printf("%s\n",f2[i]);
+    int a = open(f2[i],O_RDONLY);
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+
+    int stat = 1;
+    while(stat  != 0){                              /*boucle pour lire tout les hash*/
+      uint8_t* buff= malloc(32);
+      stat = read(a,buff,32);
+      if (stat==-1){
+	printf("impossible de lire le fichier %i \n, i");
+	printf("%\n ",strerror(errno));
+	exit(0);
+      }
+      else if(stat != 0){
+	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
+	  sem_wait(&hashempty);
+	  pthread_mutex_lock(&mutex_hash);
+	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
+	    if(hash[j]==NULL){
+	      hash[j]=buff;
+	      i=1;
+	    }
+	  }
+	  pthread_mutex_unlock(&mutex_hash);
+	}
+	sem_post(&hashfull);
+	co++;
+      }
+    }
+    close(a);
+  }
+  printf("il y a %i mots\n",co);
+  printf("fin de lecture\n");
+  W++;
+  pthread_exit(NULL);
+}
+
+void *lecture3(void *param)
+{
+  printf("il y a %i fichiers a lire\n",a3);
+  int co =0;
+
+  for(int i=0;i<a3;i++){                          /*boucle pour lire tout les fichiers*/
+    printf("%s\n",f3[i]);
+    int a = open(f3[i],O_RDONLY);
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+
+    int stat = 1;
+    while(stat  != 0){                              /*boucle pour lire tout les hash*/
+      uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
 	printf("impossible de lire le fichier %i \n, i");
@@ -194,7 +286,7 @@ void *traduction (void *param)
   sem_getvalue(&hashfull,&value);
   char *buf;  /* buffer pour le hash*/
   bool is_translate; 
-  while(W != 1 || value != 0)
+  while(W != T || value != 0)
   {
       char *buf2 = malloc(16); /* buffer pour la traduction*/
       for(int m =0; m==0;){
@@ -247,6 +339,7 @@ void *candidat(void* param)
   list->size;
   char *tra;
   int nbr = 0;
+  int co;
   while(M != N || value != 0)
     {
       for(int m =0; m==0;){
@@ -262,7 +355,7 @@ void *candidat(void* param)
 	pthread_mutex_unlock(&mutex_trad);
       }
       sem_post(&tradempty);
-      int co = count(tra,c);
+      co = count(tra,c);
       if(co == nbr){
 	add_node(list,tra);
       }
@@ -344,12 +437,31 @@ int main(int argc,char *argv[])
    */
 
 
-  ftrad=  malloc(sizeof(char*)*(nf+1));
-  ftrad[0] = (char*)&nf;
-
-  for(int i = 1; i<nf+1 ;i++)
+  f1 =  malloc(sizeof(char*)*(nf));
+  f2 =  malloc(sizeof(char*)*(nf));
+  f3 =  malloc(sizeof(char*)*(nf));
+  a1 = 0;
+  a2 = 0;
+  a3 = 0;
+  char http[8] = "https://";
+  char media[6] = "/media";
+  for(int i = 0 ; i < nf ; i++)
     {
-      ftrad[i]=argv[f+i-1];
+	if(strstr(argv[f+i],http) != NULL)
+	{
+	  f1[a1] = argv[f+i];
+	  a1++;
+	}
+	if(strstr(argv[f+i],media) != NULL)
+	{
+	  f2[a2] = argv[f+i];
+	  a2++;
+	}
+	else
+	{
+	  f3[a3] = argv[f+i];
+	  a3++;
+	}
     }
   
   printf("creation du tableau de hash\n"); 
@@ -378,44 +490,82 @@ int main(int argc,char *argv[])
     Etape de création des threads
    */
 
-  
-  pthread_t lect;
-  int err=pthread_create(&lect,NULL,&lecture,NULL);
-  if(err!=0)
+  pthread_t lect1;
+  pthread_t lect2;
+  pthread_t lect3;
+  if(a1 != 0)
+  {
+    int err=pthread_create(&lect1,NULL,&lecture1,NULL);
+    T++;
+    if(err!=0)
     {
-      printf("erreur Lecture\n");
+      printf("impossible de creer le thread de lecture \n");
     }
+  }
+
+  if(a2 != 0)
+  {
+    int err=pthread_create(&lect2,NULL,&lecture2,NULL);
+    T++;
+    if(err!=0)
+    {
+      printf("impossible de creer le thread de lecture \n");
+    }
+  }
+
+  if(a3 != 0)
+  {
+    int err=pthread_create(&lect3,NULL,&lecture3,NULL);
+    T++;
+    if(err!=0)
+    {
+      printf("impossible de creer le thread de lecture \n");
+    }
+  }
+
   pthread_t threads[N];
   for(int i=0; i < N ; i++)
   {
     if (pthread_create(&(threads[i]),NULL,&traduction,NULL) != 0)
         {
-          fprintf(stderr, "error: Cannot create thread  %d\n", i);
-          break;
+          printf("impossible de creer le thread de traduction %i \n", i);
         }
   } 
+
   pthread_t selec;
   int errrr=pthread_create(&selec,NULL,&candidat,NULL);
   if(errrr!=0)
     {
-      printf("erreur Selection\n");
+      printf("impossible de creer le thread de selection \n");
     }
-
 
    /*
     Etape de lancement des threads
    */
 
-
-  err = pthread_join(lect,NULL);
+  if(a1 != 0)
+  {
+      pthread_join(lect1,NULL);
+  }
+  if(a2 != 0)
+  {
+      pthread_join(lect2,NULL);
+  }
+  if(a3 != 0)
+  {
+      pthread_join(lect3,NULL);
+  }
   for(int j = 0 ; j < N ; j++)
   {
-     if (pthread_join(threads[j], NULL) != 0)
-        {
-          fprintf(stderr, "error: Cannot join thread  %d\n", j);
-        }
+     pthread_join(threads[j], NULL);
   }
-  errrr = pthread_join(selec,NULL);
+  pthread_join(selec,NULL);
+
+
+   /*
+    Etape de destruction des threads
+   */
+
 
   pthread_mutex_destroy(&mutex_hash);
   pthread_mutex_destroy(&mutex_trad);
@@ -424,9 +574,10 @@ int main(int argc,char *argv[])
   sem_destroy(&tradfull);
   sem_destroy(&tradempty);
   free(hash);
-  free(ftrad);
   free(trad);
-
+  free(f1);
+  free(f2);
+  free(f3);
 
   gettimeofday(&tv2,NULL);
   temps=(tv2.tv_sec-tv1.tv_sec);
