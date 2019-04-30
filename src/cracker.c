@@ -140,12 +140,9 @@ int count(char *mot, int c){
 /*
   Fonction pour le thread de lecture
  */
-
-
-
 void *lecture1(void *param)
 {
-  printf("\il y a %i fichiers a lire\n",a1);
+  printf("il y a %i fichiers a lire de type 1\n",a1);
   int co =0;
 
   for(int i=0;i<a1;i++){                          /*boucle pour lire tout les fichiers*/
@@ -189,7 +186,7 @@ void *lecture1(void *param)
 
 void *lecture2(void *param)
 {
-  printf("il y a %i fichiers a lire\n",a2);
+  printf("il y a %i fichiers a lire de type 2 \n",a2);
   int co =0;
 
   for(int i=0;i<a2;i++){                          /*boucle pour lire tout les fichiers*/
@@ -231,12 +228,13 @@ void *lecture2(void *param)
 
 void *lecture3(void *param)
 {
-  printf("il y a %i fichiers a lire\n",a3);
+  printf("il y a %i fichiers a lire de type 3\n",a3);
   int co =0;
 
   for(int i=0;i<a3;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",f3[i]);
     int a = open(f3[i],O_RDONLY);
+    printf("ouvert\n");
     if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
@@ -285,11 +283,11 @@ void *traduction (void *param)
   bool is_translate; 
   while(W != T || value != 0)
   {
-      char *buf2 = malloc(16); /* buffer pour la traduction*/
-      for(int m =0; m==0;){
-	sem_wait(&hashfull);
+      
+      for(int m =0; m==0;){                            /*Boucle pour copier un hash */
+	sem_wait(&hashfull);	
 	pthread_mutex_lock(&mutex_hash);
-	for(int n = 0; n < N+1 && m == 0 ; n++){
+	for(int n = 0; n < N+1 && m == 0 ; n++){       /*Boucle pour chercher le hash a copier*/
 	  if(hash[n] != NULL)
 	    {
 	      buf = hash[n];
@@ -300,8 +298,9 @@ void *traduction (void *param)
 	pthread_mutex_unlock(&mutex_hash);
       }
       sem_post(&hashempty);
+      char *buf2 = malloc(16); /* buffer pour la traduction*/
       is_translate = reversehash(buf,buf2,16);
-      free(buf);
+      free(buf); 
 
       for(int i =0; i==0;){
 	sem_wait(&tradempty);
