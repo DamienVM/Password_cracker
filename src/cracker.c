@@ -145,20 +145,20 @@ int count(char *mot, int c){
 
 void *lecture1(void *param)
 {
-  printf("\033[22;31m il y a %i fichiers a lire\n",a1);
+  printf("\il y a %i fichiers a lire\n",a1);
   int co =0;
 
   for(int i=0;i<a1;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("\033[22;31m %s\n",f1[i]);
+    printf("%s\n",f1[i]);
     int a = open(f1[i],O_RDONLY);
-    if(a==-1){printf("\033[22;31m impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("\033[22;31m impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -179,8 +179,8 @@ void *lecture1(void *param)
     }
     close(a);
   }
-  printf("\033[22;31m il y a %i mots\n",co);
-  printf("\033[22;31m fin de lecture\n");
+  printf("il y a %i mots\n",co);
+  printf("fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
@@ -189,20 +189,20 @@ void *lecture1(void *param)
 
 void *lecture2(void *param)
 {
-  printf("\x1b[34m il y a %i fichiers a lire\n",a2);
+  printf("il y a %i fichiers a lire\n",a2);
   int co =0;
 
   for(int i=0;i<a2;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("\x1b[34m %s\n",f2[i]);
+    printf("%s\n",f2[i]);
     int a = open(f2[i],O_RDONLY);
-    if(a==-1){printf("\x1b[34m impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("\x1b[34m impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -223,28 +223,28 @@ void *lecture2(void *param)
     }
     close(a);
   }
-  printf("\x1b[34m il y a %i mots\n",co);
-  printf("\x1b[34m fin de lecture\n");
+  printf("il y a %i mots\n",co);
+  printf("fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
 
 void *lecture3(void *param)
 {
-  printf("\x1b[33m il y a %i fichiers a lire\n",a3);
+  printf("il y a %i fichiers a lire\n",a3);
   int co =0;
 
   for(int i=0;i<a3;i++){                          /*boucle pour lire tout les fichiers*/
-    printf("\x1b[33m %s\n",f3[i]);
+    printf("%s\n",f3[i]);
     int a = open(f3[i],O_RDONLY);
-    if(a==-1){printf("\x1b[33m impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("\x1b[33m impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n, i");
 	exit(0);
       }
       else if(stat != 0){
@@ -265,8 +265,8 @@ void *lecture3(void *param)
     }
     close(a);
   }
-  printf("\x1b[33m il y a %i mots\n",co);
-  printf("\x1b[33m fin de lecture\n");
+  printf("il y a %i mots\n",co);
+  printf("fin de lecture\n");
   W++;
   pthread_exit(NULL);
 }
@@ -459,18 +459,16 @@ int main(int argc,char *argv[])
 	}
     }
   
-  printf("creation du tableau de hash\n"); 
   hash = calloc((N+1),8);
-  if(hash[0]==NULL)
+  if(hash[0] != NULL)
     {
-      printf("\tfait\n");
+      printf("\terreur dans la creation du tableau de hash\n");
     }
 
-  printf("creation du tableau de trad\n"); 
   trad = calloc((N+1),8);
-  if(trad[0]==NULL)
+  if(trad[0]!= NULL)
     {
-      printf("\tfait\n");
+      printf("\terreur dans la creation du tableau de traduction\n");
     }
 
   pthread_mutex_init(&mutex_hash,NULL);
