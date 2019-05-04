@@ -8,6 +8,3 @@ all:cracker test
 
 clean:
 	rm cracker
-
-
-
