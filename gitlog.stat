@@ -1,3 +1,42 @@
+commit eb65eb646101f6178c0fd390ef0d7e82140fcc0c
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Sat May 4 18:48:33 2019 +0200
+
+    Update Makefile
+
+ Makefile | 3 ---
+ 1 file changed, 3 deletions(-)
+
+commit 10788cecb74f59cb364e3036fe138918d30bb525
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sat May 4 18:47:38 2019 +0200
+
+    mise a jour Make file
+
+ Makefile.jpg | 3 ---
+ Makefile~    | 3 ---
+ 2 files changed, 6 deletions(-)
+
+commit ddadb49581bd7afa6c90f0d2537799c70675a34c
+Author: damien <damien@localhost.localdomain>
+Date:   Sat May 4 18:44:55 2019 +0200
+
+    mise a jour Make file
+
+ Makefile      | 13 +++++++++++++
+ Makefile~     |  3 +++
+ src/cracker.c | 19 ++++++++-----------
+ 3 files changed, 24 insertions(+), 11 deletions(-)
+
+commit f1ee45b6e2c684fb3e57c5d1253a8e01d1b26507
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Thu May 2 09:17:47 2019 +0200
+
+    Mise a jour gitlog
+
+ gitlog.stat | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
 commit b69d346fbccedd51a05ad1f92c2e72a1e472e747
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
 Date:   Tue Apr 30 18:26:46 2019 +0200
