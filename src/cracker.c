@@ -148,14 +148,14 @@ void *lecture1(void *param)
   for(int i=0;i<a1;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",f1[i]);
     int a = open(f1[i],O_RDONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i\n",i ); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n", i);
 	exit(0);
       }
       else if(stat != 0){
@@ -192,14 +192,14 @@ void *lecture2(void *param)
   for(int i=0;i<a2;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",f2[i]);
     int a = open(f2[i],O_RDONLY);
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n", i); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n", i);
 	exit(0);
       }
       else if(stat != 0){
@@ -235,14 +235,14 @@ void *lecture3(void *param)
     printf("%s\n",f3[i]);
     int a = open(f3[i],O_RDONLY);
     printf("ouvert\n");
-    if(a==-1){printf("impossible d'ouvrir le fichier %i \n, i"); }
+    if(a==-1){printf("impossible d'ouvrir le fichier %i \n", i); }
 
     int stat = 1;
     while(stat  != 0){                              /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
-	printf("impossible de lire le fichier %i \n, i");
+	printf("impossible de lire le fichier %i \n", i);
 	exit(0);
       }
       else if(stat != 0){
@@ -279,8 +279,7 @@ void *traduction (void *param)
 {
   int value;
   sem_getvalue(&hashfull,&value);
-  char *buf;  /* buffer pour le hash*/
-  bool is_translate; 
+  uint8_t *buf;  /* buffer pour le hash*/
   while(W != T || value != 0)
   {
       
@@ -299,7 +298,7 @@ void *traduction (void *param)
       }
       sem_post(&hashempty);
       char *buf2 = malloc(16); /* buffer pour la traduction*/
-      is_translate = reversehash(buf,buf2,16);
+      reversehash(buf,buf2,16);
       free(buf); 
 
       for(int i =0; i==0;){
@@ -331,8 +330,6 @@ void *candidat(void* param)
   int value;
   sem_getvalue(&tradfull,&value);
   list_t *list = malloc(sizeof(list_t));
-  list->first;
-  list->size;
   char *tra;
   int nbr = 0;
   int co;
