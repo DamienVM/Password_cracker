@@ -1,10 +1,13 @@
 cracker: src/cracker.c
 	gcc -pthread -std=c99 -Wall -Werror -o cracker src/cracker.c
 
-test: tests/01_4c_1k.bin 
-	./cracker -t 10 tests/01_4c_1k.bin
+test: src/test.c
+	export LD_LIBRARY_PATH=$$HOME/local/lib:$$LD_LIBRARY_PATH
+	gcc -L$$HOME/local/lib -lcunit -I$$HOME/local/include -Wall -Werror -o test src/test.c
+	./test
 
-all:cracker test
+all: cracker test
 
 clean:
 	rm cracker
+	rm test
