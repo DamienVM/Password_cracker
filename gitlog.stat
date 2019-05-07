@@ -1,3 +1,59 @@
+commit 9a3a2e4286ea20c5acadfdd5e50808b659c0e8f6
+Author: damien <damien@localhost.localdomain>
+Date:   Tue May 7 16:49:15 2019 +0200
+
+    Mise a jour
+
+ cracker | Bin 36504 -> 0 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 62762bc4adcc1b9f9f69965171e443bb32c80214
+Author: damien <damien@localhost.localdomain>
+Date:   Tue May 7 16:36:29 2019 +0200
+
+    Commentaires
+
+ cracker       | Bin 0 -> 36504 bytes
+ src/cracker.c | 229 +++++++++++++++++++++++++---------------------------------
+ 2 files changed, 99 insertions(+), 130 deletions(-)
+
+commit 43b4230e907c0a676e82c8d5903d25e802685b51
+Author: damien <damien@localhost.localdomain>
+Date:   Tue May 7 16:04:53 2019 +0200
+
+    Mise a jour Makefile
+
+ Makefile | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 8af7681723f33a3bbeb9aaa640e8f316d6f41c26
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Tue May 7 15:24:16 2019 +0200
+
+    Ajout commentaires
+
+ src/cracker.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
+
+commit 274d666cfdb145f664f55a2e4fe1173105e3f822
+Author: damien <damien@localhost.localdomain>
+Date:   Sun May 5 16:21:48 2019 +0200
+
+    Mise a jour test
+
+ Makefile   |  9 +++++---
+ src/test.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+), 3 deletions(-)
+
+commit 3d09dd7747780514ba9c75478e8eba1b6f9be1df
+Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
+Date:   Sat May 4 18:50:01 2019 +0200
+
+    Misea jour git log
+
+ gitlog.stat | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
 commit eb65eb646101f6178c0fd390ef0d7e82140fcc0c
 Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
 Date:   Sat May 4 18:48:33 2019 +0200
@@ -131,9 +187,10 @@ Date:   Sun Apr 28 17:17:16 2019 +0200
 
     Mise en forme du dossier
 
- rapport.pdf                | Bin 0 -> 44977 bytes
- cracker.c => src/cracker.c |   0
- 2 files changed, 0 insertions(+), 0 deletions(-)
+ cracker.c     | 439 ----------------------------------------------------------
+ rapport.pdf   | Bin 0 -> 44977 bytes
+ src/cracker.c | 439 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 439 insertions(+), 439 deletions(-)
 
 commit 882edb83b54adee4c4d05f61fa4ebf6e3c6d94b3
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
@@ -178,8 +235,9 @@ Date:   Sun Apr 28 16:46:53 2019 +0200
 
     Mise à jour Make file
 
- Makefile (4).jpg => Makefile.jpg | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
+ Makefile (4).jpg | 3 ---
+ Makefile.jpg     | 3 +++
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 commit 1c752bc29657c61d6a307a2ca2d54946c920bf91
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
