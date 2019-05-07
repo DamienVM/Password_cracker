@@ -9,8 +9,8 @@
 #include <getopt.h>
 #include <semaphore.h>
 #include <stdbool.h>
-#include "CUnit/CUnit.h"
-#include "CUnit/Basic.h"
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
 
 
 void test_assert_true(void)
