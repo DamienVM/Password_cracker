@@ -17,31 +17,33 @@
 
 char **f1;
 char **f2; 
-char **f3;         /*Liste des fichiers*/
-uint8_t **hash;         /*Tableau pour les pointeurs hash */
-char **trad;          /*Tableau pour les pointeurs traduction */
+char **f3;           /*Liste des fichiers*/
+uint8_t **hash;      /*Tableau pour les pointeurs hash */
+char **trad;         /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
 pthread_mutex_t mutex_trad;
 sem_t hashempty;
 sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
-int N = 1; /* nombre de threads de calcul*/
-int T = 0; /*nombre de threads de lecture */
-int M = 0; /*nombre de threads ayant fini l'étape traduction */
-int W = 0; /*nombre de threads ayant fini l'étape lecture */
-int c = 0;
-int o = 0;
-char *out;
+int N = 1;			 /* nombre de threads de calcul*/
+int T = 0;			 /*nombre de threads de lecture */
+int M = 0;			 /*nombre de threads ayant fini l'étape traduction */
+int W = 0;			 /*nombre de threads ayant fini l'étape lecture */
+int c = 0;			 /*valeur qui indique si on analyse les consonnes */
+int o = 0;			 /*valeur qui indique si il y a un fichier de sortie */
+char *out;			 /*Nom fi fichier de sortie*/
 int a1;
 int a2;
 int a3;
 
+/* Definition de la structure node qui contient un pointeur char et un pointeur node*/
 typedef struct node{
   struct node *next;
   char *mot;
 } node_t;
 
+/* Definition de la stucture list qui contient un pointeur vers une node qui est la première de la liste*/
 typedef struct list{
   struct node *first;
   int size;
@@ -63,7 +65,7 @@ node_t* init_node(char* val){
 
 
 /*
-  Fonction pour ajouter à la liste pointée par "list" une node contennant un mot pointé par "val"
+  Fonction pour ajouter à la tête de la liste pointée par "list" une node contennant un mot pointé par "val"
  */
 
 
@@ -151,7 +153,7 @@ void *lecture1(void *param)
     if(a==-1){printf("impossible d'ouvrir le fichier %i\n",i ); }
 
     int stat = 1;
-    while(stat  != 0){                              /*boucle pour lire tout les hash*/
+    while(stat  != 0){                             /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
@@ -159,10 +161,10 @@ void *lecture1(void *param)
 	exit(0);
       }
       else if(stat != 0){
-	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
+	for(int i =0; i==0;){                          /*boucle pour mette le hash dans le tableau */
 	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
-	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
+	  for(int j = 0; j < N+1 && i==0 ;j++){        /*boucle pour chercher une place*/
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
 	      i=1;
@@ -195,7 +197,7 @@ void *lecture2(void *param)
     if(a==-1){printf("impossible d'ouvrir le fichier %i \n", i); }
 
     int stat = 1;
-    while(stat  != 0){                              /*boucle pour lire tout les hash*/
+    while(stat  != 0){                             /*boucle pour lire tout les hash*/
       uint8_t* buff= malloc(32);
       stat = read(a,buff,32);
       if (stat==-1){
@@ -203,10 +205,10 @@ void *lecture2(void *param)
 	exit(0);
       }
       else if(stat != 0){
-	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
+	for(int i =0; i==0;){                          /*boucle pour mette le hash dans le tableau */
 	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
-	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
+	  for(int j = 0; j < N+1 && i==0 ;j++){        /*boucle pour chercher une place*/
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
 	      i=1;
