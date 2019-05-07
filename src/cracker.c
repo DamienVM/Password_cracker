@@ -17,22 +17,22 @@
 
 char **f1;
 char **f2; 
-char **f3;           /*Liste des fichiers*/
-uint8_t **hash;      /*Tableau pour les pointeurs hash */
-char **trad;         /*Tableau pour les pointeurs traduction */
+char **f3;              /*Liste des fichiers*/
+uint8_t **hash;         /*Tableau pour les pointeurs hash */
+char **trad;            /*Tableau pour les pointeurs traduction */
 pthread_mutex_t mutex_hash;
 pthread_mutex_t mutex_trad;
 sem_t hashempty;
 sem_t hashfull;
 sem_t tradempty;
 sem_t tradfull;
-int N = 1;			 /* nombre de threads de calcul*/
-int T = 0;			 /*nombre de threads de lecture */
-int M = 0;			 /*nombre de threads ayant fini l'étape traduction */
-int W = 0;			 /*nombre de threads ayant fini l'étape lecture */
-int c = 0;			 /*valeur qui indique si on analyse les consonnes */
-int o = 0;			 /*valeur qui indique si il y a un fichier de sortie */
-char *out;			 /*Nom fi fichier de sortie*/
+int N = 1;               /* nombre de threads de calcul*/
+int T = 0;	       	 /*nombre de threads de lecture */
+int M = 0;     		 /*nombre de threads ayant fini l'étape traduction */
+int W = 0;     		 /*nombre de threads ayant fini l'étape lecture */
+int c = 0;	      	 /*valeur qui indique si on analyse les consonnes */
+int o = 0;	       	 /*valeur qui indique si il y a un fichier de sortie */
+char *out;     		 /*Nom fi fichier de sortie*/
 int a1;
 int a2;
 int a3;
@@ -53,8 +53,6 @@ typedef struct list{
 /*
   Fonction pour initialiser une node  contennant un mot pointé par "val"
  */
-
-
 node_t* init_node(char* val){
   node_t *n;
   n = malloc(sizeof(node_t));
@@ -67,8 +65,6 @@ node_t* init_node(char* val){
 /*
   Fonction pour ajouter à la tête de la liste pointée par "list" une node contennant un mot pointé par "val"
  */
-
-
 int add_node(list_t *list, char* val){
   node_t *n = init_node(val);
   if(list->first==NULL){
@@ -87,8 +83,6 @@ int add_node(list_t *list, char* val){
 /*
   Fonction qui vide la liste (le pointeur vers la liste est conservé)
 */
-
-
 void empty_list(list_t *list){
   node_t *c = list->first;
   list->first = NULL;
@@ -105,8 +99,6 @@ void empty_list(list_t *list){
 /*
   Fonction qui suppprime la liste et son contenu
 */
-
-
 void delete_list(list_t *list){
   empty_list(list);
   free(list->first);
@@ -116,10 +108,7 @@ void delete_list(list_t *list){
 
 /*
   Fonction qui, pour le mot pointé par "mot", compte le nombre d'occurence de voyelles ou de consonnes en fonction du paramètre c
-
 */
-
-
 int count(char *mot, int c){
   int nbr = 0;
   for(int i = 0 ; i < strlen(mot) ; i++){
@@ -161,10 +150,10 @@ void *lecture1(void *param)
 	exit(0);
       }
       else if(stat != 0){
-	for(int i =0; i==0;){                          /*boucle pour mette le hash dans le tableau */
+	for(int i =0; i==0;){                      /*boucle pour mette le hash dans le tableau */
 	  sem_wait(&hashempty);
 	  pthread_mutex_lock(&mutex_hash);
-	  for(int j = 0; j < N+1 && i==0 ;j++){        /*boucle pour chercher une place*/
+	  for(int j = 0; j < N+1 && i==0 ;j++){    /*boucle pour chercher une place*/
 	    if(hash[j]==NULL){
 	      hash[j]=buff;
 	      i=1;
@@ -275,58 +264,52 @@ void *lecture3(void *param)
 /*
   Fonction pour le thread de traduction
 */
-
-
 void *traduction (void *param)
 {
-  int value;
+  int value; /*valeur correspondant au nombre de cases remplies dans le tableau hash*/
   sem_getvalue(&hashfull,&value);
   uint8_t *buf;  /* buffer pour le hash*/
-  while(W != T || value != 0)
-  {
-      
-      for(int m =0; m==0;){                            /*Boucle pour copier un hash */
-	sem_wait(&hashfull);	
-	pthread_mutex_lock(&mutex_hash);
-	for(int n = 0; n < N+1 && m == 0 ; n++){       /*Boucle pour chercher le hash a copier*/
-	  if(hash[n] != NULL)
-	    {
-	      buf = hash[n];
-	      hash[n]=NULL;
-	      m = 1;
-	    }
+  while(W != T || value != 0){                       /*Boucle principipale qui agit tant que la lecture n'est pas finie et que le tableau hash n'est pas vide */
+    for(int m =0; m==0;){                            /*Boucle pour prendre un hash */
+      sem_wait(&hashfull);	
+      pthread_mutex_lock(&mutex_hash);
+      for(int n = 0; n < N+1 && m == 0 ; n++){       /*Boucle pour chercher le hash a copier*/
+	if(hash[n] != NULL){
+	  buf = hash[n];
+	  hash[n]=NULL;
+	  m = 1;
 	}
-	pthread_mutex_unlock(&mutex_hash);
       }
-      sem_post(&hashempty);
-      char *buf2 = malloc(16); /* buffer pour la traduction*/
-      reversehash(buf,buf2,16);
-      free(buf); 
-
-      for(int i =0; i==0;){
-	sem_wait(&tradempty);
-	pthread_mutex_lock(&mutex_trad);
-	for(int j = 0; j < N+1 && i==0 ; j++){
-	  if(trad[j]==NULL){
-	    trad[j]=buf2;
-	    i=1;
-	  }
+      pthread_mutex_unlock(&mutex_hash);
+    }
+    sem_post(&hashempty);
+    char *buf2 = malloc(16); /* buffer pour la traduction*/
+    reversehash(buf,buf2,16);/* buff2 contient le pointeur vers la traduction*/
+    free(buf);               /* buff n'est plus nécessaire et est donc liberé*/
+    
+    for(int i =0; i==0;){                            /*Boucle pour mettre la tradduction*/
+      sem_wait(&tradempty);
+      pthread_mutex_lock(&mutex_trad);
+      for(int j = 0; j < N+1 && i==0 ; j++){         /*Boucle pour cherhcer une palce*/
+	if(trad[j]==NULL){
+	  trad[j]=buf2;
+	  i=1;
 	}
-	pthread_mutex_unlock(&mutex_trad);
       }
-      sem_post(&tradfull);
-      sem_getvalue(&hashfull,&value);
+      pthread_mutex_unlock(&mutex_trad);
+    }
+    sem_post(&tradfull);
+    sem_getvalue(&hashfull,&value);
   }
   printf("fin de traduction\n");
   M++;
   pthread_exit(NULL);
 }
 
+
 /*
   Fonction pour le thread qui choisi les candidats
 */
-
-
 void *candidat(void* param)
 {
   int value;
@@ -335,58 +318,58 @@ void *candidat(void* param)
   char *tra;
   int nbr = 0;
   int co;
-  while(M != N || value != 0)
-    {
-      for(int m =0; m==0;){
-	sem_wait(&tradfull);
-	pthread_mutex_lock(&mutex_trad);
-	for(int n = 0; n < N+1 && m == 0 ; n++){
-	  if(trad[n] != NULL){
-	    tra = trad[n];
-	    trad[n]=NULL;
-	    m = 1;
-	  }
+  while(M != N || value != 0){                    /*Boucle principipale qui agit tant que la traduction n'est pas finie et que le tableau trad n'est pas vide */
+    for(int m =0; m==0;){                         /* Boucle pour prenre un mot */
+      sem_wait(&tradfull);
+      pthread_mutex_lock(&mutex_trad);            /*Boucle pour chercher un mot*/
+      for(int n = 0; n < N+1 && m == 0 ; n++){
+	if(trad[n] != NULL){
+	  tra = trad[n];
+	  trad[n]=NULL;
+	  m = 1;
 	}
-	pthread_mutex_unlock(&mutex_trad);
       }
-      sem_post(&tradempty);
-      co = count(tra,c);
-      if(co == nbr){
-	add_node(list,tra);
-      }
-      else if(co > nbr){
-	nbr = co;
-	empty_list(list);
-	add_node(list,tra);
-      }
-      else{
-	free(tra);
-      }
-      sem_getvalue(&tradfull,&value);
+      pthread_mutex_unlock(&mutex_trad);
     }
-  if(o)
-    {
-      int a = open(out,O_RDWR | O_TRUNC);
-      if(a==-1){printf("impossible d'ouvrir le fichier de sortie"); }
-      struct node *n = list->first;
-      for (int i = 0; i < list->size ; i++)
-	{
-	  write(a,n->mot,strlen(n->mot));
-	  write(a,"\n",1);
-	  n = n->next;
-	}
-      close(a);
-    }   
-  else
-    {
+    sem_post(&tradempty);
+    co = count(tra,c);
+    if(co == nbr){
+      add_node(list,tra);
+    }
+    else if(co > nbr){
+      nbr = co;
+      empty_list(list);
+      add_node(list,tra);
+    }
+    else{
+      free(tra);
+    }
+    sem_getvalue(&tradfull,&value);
+  }
+  /*
+    Le choix des candidats est terminé
+    Passage à la sorite des candicats
+   */
+  if(o){ /*Si un fichier de sortie a été donné*/
+    int a = open(out,O_RDWR | O_TRUNC);
+    if(a==-1){printf("impossible d'ouvrir le fichier de sortie"); }
     struct node *n = list->first;
     for (int i = 0; i < list->size ; i++)
       {
-	printf(n->mot);
-	printf("\n");
+	write(a,n->mot,strlen(n->mot));
+	write(a,"\n",1);
 	n = n->next;
       }
+    close(a);
+  }   
+  else{ /*Sinon affichage sur la sortie standard*/
+    struct node *n = list->first;
+    for (int i = 0; i < list->size ; i++){
+      printf(n->mot);
+      printf("\n");
+      n = n->next;
     }
+  }
   delete_list(list);
   printf("fin de la sélection\n");
   pthread_exit(NULL);
@@ -396,15 +379,13 @@ void *candidat(void* param)
 /*
   Fonction principale
  */
-
-
 int main(int argc,char *argv[])
 {
-  struct timeval tv1,tv2;
+  struct timeval tv1,tv2; /*Valeur de calcul de temps d'exécution*/ 
   long long temps;
   gettimeofday(&tv1,NULL);
   int opt;
-  int f = 1;
+  int f = 1; /*Nombres de fichiers a traiter*/
 
   while ((opt = getopt (argc, argv, "t:co:")) != -1)
   {
@@ -428,10 +409,8 @@ int main(int argc,char *argv[])
 
 
   /*
-    Fin de L'anayse des arguments
+    initialisation des tableaux, mutex et sémaphores
    */
-
-
   f1 =  malloc(sizeof(char*)*(nf));
   f2 =  malloc(sizeof(char*)*(nf));
   f3 =  malloc(sizeof(char*)*(nf));
@@ -480,7 +459,6 @@ int main(int argc,char *argv[])
   /*
     Etape de création des threads
    */
-
   pthread_t lect1;
   pthread_t lect2;
   pthread_t lect3;
@@ -530,34 +508,28 @@ int main(int argc,char *argv[])
       printf("impossible de creer le thread de selection \n");
     }
 
+
    /*
     Etape de lancement des threads
    */
-
-  if(a1 != 0)
-  {
-      pthread_join(lect1,NULL);
+  if(a1 != 0){
+    pthread_join(lect1,NULL);
   }
-  if(a2 != 0)
-  {
-      pthread_join(lect2,NULL);
+  if(a2 != 0){
+    pthread_join(lect2,NULL);
   }
-  if(a3 != 0)
-  {
-      pthread_join(lect3,NULL);
+  if(a3 != 0){
+    pthread_join(lect3,NULL);
   }
-  for(int j = 0 ; j < N ; j++)
-  {
-     pthread_join(threads[j], NULL);
+  for(int j = 0 ; j < N ; j++){
+    pthread_join(threads[j], NULL);
   }
   pthread_join(selec,NULL);
 
 
-   /*
-    Etape de destruction des threads
-   */
-
-
+  /*
+    Etape de destruction des threads et des variables malloc
+  */
   pthread_mutex_destroy(&mutex_hash);
   pthread_mutex_destroy(&mutex_trad);
   sem_destroy(&hashfull);
@@ -573,9 +545,6 @@ int main(int argc,char *argv[])
   gettimeofday(&tv2,NULL);
   temps=(tv2.tv_sec-tv1.tv_sec);
   printf("temps=%lld secondes\n",temps);
-
-
-
   printf("\033[0;31mFonction principale finie\033[00m\n");
   return 1;
 }
