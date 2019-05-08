@@ -30,6 +30,7 @@ int W = 0; /*nombre de threads ayant fini l'étape lecture */
 int c = 0;
 int o = 0;
 char *out;
+int count_mot;
 
 typedef struct node{
   struct node *next;
@@ -138,7 +139,7 @@ void *lecture(void *param)
 {
   int nf = (int)*ftrad[0];
   printf("il y a %i fichiers a lire\n",nf);
-  int co =0;
+  count_mot =0;
 
   for(int i=1;i<nf+1;i++){                          /*boucle pour lire tout les fichiers*/
     printf("%s\n",ftrad[i]);
@@ -166,12 +167,12 @@ void *lecture(void *param)
 	  pthread_mutex_unlock(&mutex_hash);
 	}
 	sem_post(&hashfull);
-	co++;
+	count_mot++;
       }
     }
     close(a);
   }
-  printf("il y a %i mots\n",co);
+  printf("il y a %i mots\n",count_mot);
   printf("fin de lecture\n");
   W++;
   pthread_exit(NULL);
@@ -242,7 +243,8 @@ void *candidat(void* param)
   char *tra;
   int nbr = 0;
   int co;
-  while(M != N || value != 0)
+  int counter = 0;
+  while(counter < count_mot || W != 1)
     {
       for(int m =0; m==0;){
 	sem_wait(&tradfull);
@@ -255,7 +257,7 @@ void *candidat(void* param)
 	  }
 	}
 	pthread_mutex_unlock(&mutex_trad);
-      }
+      }	
       sem_post(&tradempty);
       co = count(tra,c);
       if(co == nbr){
@@ -270,6 +272,7 @@ void *candidat(void* param)
 	free(tra);
       }
       sem_getvalue(&tradfull,&value);
+      counter++;
     }
   if(o)
     {
