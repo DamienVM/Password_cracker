@@ -4,7 +4,6 @@ cracker: src/cracker.c
 tests: src/test.c
 	gcc -g -pthread -std=c99 -Wall -Werror -o test src/test.c
 	./test
-	rm test
 
 all: cracker tests
 
