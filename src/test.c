@@ -9,62 +9,86 @@
 #include <getopt.h>
 #include <semaphore.h>
 #include <stdbool.h>
-#include <CUnit/CUnit.h>
-#include <CUnit/Basic.h>
+#include "cracker_fct.c"
+
+int main(void){
+  char* cafe = malloc(sizeof(char)*16);
+  strcpy(cafe,"cafe");
+  char* fusee = malloc(sizeof(char)*16);
+  strcpy(fusee,"fusee");
+  char* kayak = "kayak";
+  char* cqmd = "cqmd";
+
+  printf("Test de la fonction 'count'\n");
+  
+  if(count(cafe,0) == 2)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur la fonction dit que %s a %i voyelle.s\n",cafe,count(cafe,0));
+  
+  if(count(kayak,0) == 3)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur la fonction dit que %s a %i voyelle.s\n",cafe,count(kayak,0));
+  
+  if(count(cqmd,0) == 0)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur la fonction dit que %s a %i voyelle.s\n",cafe,count(cqmd,0));
+  
+  if(count(cqmd,1) == 4)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur la fonction dit que %s a %i consonne.s\n",cafe,count(cqmd,1));
+  
+  if(count(fusee,1) == 2)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur la fonction dit que %s a %i consonne.s\n",cafe,count(fusee,1));
+
+  printf("Test de la fonction 'init_node'\n");
+  node_t* node = init_node(fusee);
+  node_t* n = init_node(cqmd);
+  if(strcmp(node->mot,"fusee")==0)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur"); 
+
+  if(strcmp(n->mot,"cqmd")==0)
+    printf("\tReussi\n");
+  else
+    printf("\tErreur\n");
+
+  free(node);
+  free(n);
+
+   printf("Test de la fonction 'add_node'\n");
+
+   list_t* list = malloc(sizeof(list_t));
+   list->first = NULL;
+   add_node(list,fusee);
+   add_node(list,cafe);
+   
+   if(strcmp(list->first->mot,"cafe")==0)
+     printf("\tReussi\n");
+   else
+     printf("\tErreur\n");
+
+   if(strcmp(list->first->next->mot,"fusee")==0)
+     printf("\tReussi\n");
+   else
+     printf("\tErreur\n");
+
+   printf("test de la fonction 'empty_list'\n");
+   empty_list(list);
+   if(list->first==NULL)
+     printf("\tReussi\n");
+   else
+     printf("\tErreur\n");
+
+   printf("Fin des Test");
 
 
-void test_assert_true(void)
-{
-  CU_ASSERT(true);
+   return 0;
 }
 
-void test_assert_2_not_equal_minus_1(void)
-{
-  CU_ASSERT_NOT_EQUAL(2, -1);
-}
-
-void test_string_equals(void)
-{
-  CU_ASSERT_STRING_EQUAL("string #1", "string #1");
-}
-
-void test_failure(void)
-{
-  CU_ASSERT(false);
-}
-
-void test_string_equals_failure(void)
-{
-  CU_ASSERT_STRING_EQUAL("string #1", "string #2");
-}
-
-int main(){
-
-  if (CUE_SUCCESS != CU_initialize_registry()){
-    return CU_get_error();
-  }
-
-  int setup(void)  { return 0; }
-  int teardown(void) { return 0; }
-  // ...
-  CU_pSuite pSuite = NULL;
-  // ...
-  pSuite = CU_add_suite("ma_suite", setup, teardown);
-  if (NULL == pSuite) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
-
-  if ((NULL == CU_add_test(pSuite, "Test assert true", test_assert_true)) ||
-      (NULL == CU_add_test(pSuite, "Test assert 2 not equal -1", test_assert_2_not_equal_minus_1)) ||
-      (NULL == CU_add_test(pSuite, "Test string equals", test_string_equals)) ||
-      (NULL == CU_add_test(pSuite, "Test failure", test_failure)) ||
-      (NULL == CU_add_test(pSuite, "Test string equals failure", test_string_equals_failure)))
-    {
-      CU_cleanup_registry();
-      return CU_get_error();
-    }
-  CU_basic_run_tests();
-  CU_basic_show_failures(CU_get_failure_list());
-  return 1;
-}
