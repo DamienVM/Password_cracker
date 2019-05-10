@@ -10,7 +10,6 @@
 #include <semaphore.h>
 #include "reverse.c"
 #include "sha256.c"
-#include <sys/time.h>
 /*Les fonctions supplémentatires se trouvent dans cracker_fct.c */
 #include "cracker_fct.c"
 
@@ -202,9 +201,6 @@ void *candidat(void* param)
  
  
 int main(int argc,char *argv[]){
-  struct timeval tv1,tv2;
-  long long temps;
-  gettimeofday(&tv1,NULL);
   int opt;
   int f = 1;
   while ((opt = getopt (argc, argv, "t:co:")) != -1){
@@ -289,10 +285,6 @@ int main(int argc,char *argv[]){
   free(hash);
   free(trad);
   free(ftrad);
-
-  gettimeofday(&tv2,NULL);
-  temps=(tv2.tv_sec-tv1.tv_sec);
-  printf("temps=%lld secondes\n",temps);
 
 
 
