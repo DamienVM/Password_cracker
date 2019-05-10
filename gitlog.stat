@@ -1,3 +1,150 @@
+commit c77b049f529b247e27a0afe85d2e19e5b91226db
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Thu May 9 22:21:11 2019 +0200
+
+    Delete test2.c~
+
+ src/test2.c~ | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+commit 679a0e4e4c3e49507eb5f2a305a914f861976da3
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Thu May 9 22:21:04 2019 +0200
+
+    Delete test2.c
+
+ src/test2.c | 48 ------------------------------------------------
+ 1 file changed, 48 deletions(-)
+
+commit 6810b906d2b4905ed05ec9cffb26f7d6e58847e0
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Thu May 9 22:20:36 2019 +0200
+
+    Delete cracker_ftc.c
+
+ src/cracker_ftc.c | 92 -------------------------------------------------------
+ 1 file changed, 92 deletions(-)
+
+commit da284192b27cb74826e587858a06af899337504e
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Thu May 9 22:20:21 2019 +0200
+
+    Delete test
+
+ src/test | Bin 36536 -> 0 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 86627e8d5dbcbb4cdef2135f841d7743fe625405
+Author: DamienVM <48448338+DamienVM@users.noreply.github.com>
+Date:   Thu May 9 22:20:07 2019 +0200
+
+    Delete cracker
+
+ cracker | Bin 45848 -> 0 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 6f17fa2165e25714132f858e02dab50a237883a9
+Author: damien <damien@localhost.localdomain>
+Date:   Thu May 9 22:18:55 2019 +0200
+
+    Make
+
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit f48d174ab7283006794f51bf94390d86fbff098c
+Author: damien <damien@localhost.localdomain>
+Date:   Thu May 9 21:54:06 2019 +0200
+
+    tests
+
+ Makefile      |   6 +--
+ src/reverse.c |  50 ++++++++++++++++++++++++
+ src/test.c    | 120 +++++++++++++++++++++++++++++++++++-----------------------
+ 3 files changed, 125 insertions(+), 51 deletions(-)
+
+commit 20b6f43f4fe0c5d742b96c6c74075113d11ec275
+Author: serenalucca <49030938+serenalucca@users.noreply.github.com>
+Date:   Thu May 9 11:49:27 2019 +0200
+
+    Delete reverse.c
+    
+    renomé fct
+
+ src/reverse.c | 50 --------------------------------------------------
+ 1 file changed, 50 deletions(-)
+
+commit c33c557aa02dbf9132c5931e62f8b299a718edf5
+Author: Serena Lucca <luccas@malastare.info.ucl.ac.be>
+Date:   Thu May 9 11:45:32 2019 +0200
+
+    test des temps d'exe
+
+ cracker           | Bin 45936 -> 45848 bytes
+ src/cracker.c     | 161 ++++++++++++++++++++++++++----------------------------
+ src/cracker_fct.c |  92 +++++++++++++++++++++++++++++++
+ 3 files changed, 169 insertions(+), 84 deletions(-)
+
+commit db544261569131f65e5a30c02f5abad218cdf53f
+Author: damien <damien@localhost.localdomain>
+Date:   Wed May 8 22:08:48 2019 +0200
+
+    Mise à jour
+
+ src/cracker.c     | 99 ++-----------------------------------------------------
+ src/cracker_ftc.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/test2.c       | 48 +++++++++++++++++++++++++++
+ src/test2.c~      | 12 +++++++
+ 4 files changed, 154 insertions(+), 97 deletions(-)
+
+commit 71e30d6260114ad04d402174c6476164f8aafce1
+Author: damien <damien@localhost.localdomain>
+Date:   Wed May 8 21:18:40 2019 +0200
+
+    Commentaires
+
+ src/cracker.c | 284 ++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 125 insertions(+), 159 deletions(-)
+
+commit 0c5b888e275121a9661924211d60e53707edfaf5
+Author: Serena Lucca <luccas@malastare.info.ucl.ac.be>
+Date:   Wed May 8 14:56:07 2019 +0200
+
+    Debug cndidats
+
+ cracker       | Bin 0 -> 45936 bytes
+ src/cracker.c |  13 ++++++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+commit bb7bb75c5ddd0233ee2b85df3b04d0fe3242f985
+Author: root <root@localhost.localdomain>
+Date:   Wed May 8 14:01:18 2019 +0200
+
+    fonction lecture
+
+ Makefile      |   4 +-
+ src/cracker.c | 391 ++++++++++++++++++++--------------------------------------
+ 2 files changed, 139 insertions(+), 256 deletions(-)
+
+commit cba8e982ad3e6d1f70902b9e2904cefb279ee7e3
+Author: damien <damien@localhost.localdomain>
+Date:   Tue May 7 17:39:43 2019 +0200
+
+    Mise a jour
+
+ src/test   | Bin 0 -> 36536 bytes
+ src/test.c |   4 ++--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 300ff5f48b7e5e96f1a5891b7443b68aebb07dfd
+Author: damien <damien@localhost.localdomain>
+Date:   Tue May 7 16:50:44 2019 +0200
+
+    Mise a jour gitlog
+
+ gitlog.stat | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 5 deletions(-)
+
 commit 9a3a2e4286ea20c5acadfdd5e50808b659c0e8f6
 Author: damien <damien@localhost.localdomain>
 Date:   Tue May 7 16:49:15 2019 +0200
@@ -187,10 +334,9 @@ Date:   Sun Apr 28 17:17:16 2019 +0200
 
     Mise en forme du dossier
 
- cracker.c     | 439 ----------------------------------------------------------
- rapport.pdf   | Bin 0 -> 44977 bytes
- src/cracker.c | 439 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 439 insertions(+), 439 deletions(-)
+ rapport.pdf                | Bin 0 -> 44977 bytes
+ cracker.c => src/cracker.c |   0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
 
 commit 882edb83b54adee4c4d05f61fa4ebf6e3c6d94b3
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
@@ -235,9 +381,8 @@ Date:   Sun Apr 28 16:46:53 2019 +0200
 
     Mise à jour Make file
 
- Makefile (4).jpg | 3 ---
- Makefile.jpg     | 3 +++
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ Makefile (4).jpg => Makefile.jpg | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
 
 commit 1c752bc29657c61d6a307a2ca2d54946c920bf91
 Author: DamienVM <damien.vanmeerbeeck@student.uclouvain.be>
